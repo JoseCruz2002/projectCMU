@@ -6,13 +6,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.PhotoCamera
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -22,15 +22,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import pt.ulisboa.tecnico.cmov.frontend.R
 import pt.ulisboa.tecnico.cmov.frontend.ui.theme.PharmacISTTheme
 
 @Composable
-fun AddPharmacyRoute(
+fun AddMedicineRoute(
     modifier: Modifier = Modifier
 ) {
-    AddPharmacyScreen(
+    AddMedicineScreen(
         name = "",
         onNameChange = {},
         modifier = modifier
@@ -38,7 +39,7 @@ fun AddPharmacyRoute(
 }
 
 @Composable
-fun AddPharmacyScreen(
+fun AddMedicineScreen(
     name: String,
     onNameChange: (String) -> Unit,
     modifier: Modifier = Modifier
@@ -53,7 +54,7 @@ fun AddPharmacyScreen(
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
         ) {
             Text(
-                text = stringResource(R.string.add_pharmacy_title),
+                text = stringResource(R.string.add_medicine_title),
                 style = MaterialTheme.typography.headlineMedium
             )
             OutlinedTextField(
@@ -62,7 +63,7 @@ fun AddPharmacyScreen(
                 modifier = Modifier
                     .fillMaxWidth(),
                 label = {
-                    Text(stringResource(R.string.pharmacy_name))
+                    Text(stringResource(R.string.medicine_name))
                 }
             )
             OutlinedTextField(
@@ -71,29 +72,30 @@ fun AddPharmacyScreen(
                 modifier = Modifier
                     .fillMaxWidth(),
                 label = {
-                    Text(stringResource(R.string.pharmacy_address))
-                }
+                    Text(stringResource(R.string.medicine_description))
+                },
+                minLines = 4
             )
-            Card {
-                Column(
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = onNameChange,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(dimensionResource(R.dimen.padding_medium)),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    IconButton(
-                        onClick = { /*TODO*/ },
-                        colors = IconButtonDefaults.iconButtonColors(
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary
-                        )
-                    ) {
-                        Icon(Icons.Outlined.PhotoCamera, null)
-                    }
-                    Text(
-                        stringResource(R.string.add_photo),
-                        style = MaterialTheme.typography.labelMedium
+                        .weight(1f),
+                    label = {
+                        Text(stringResource(R.string.medicine_quantity))
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number
                     )
+                )
+                IconButton(onClick = { /*TODO*/ }) {
+                    Icon(Icons.Default.Remove, contentDescription = null)
+                }
+                IconButton(onClick = { /*TODO*/ }) {
+                    Icon(Icons.Default.Add, contentDescription = null)
                 }
             }
         }
@@ -123,9 +125,9 @@ fun AddPharmacyScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun AddPharmacyScreenPreview() {
+fun AddMedicineScreenPreview() {
     PharmacISTTheme {
-        AddPharmacyScreen(
+        AddMedicineScreen(
             name = "",
             onNameChange = {},
             modifier = Modifier

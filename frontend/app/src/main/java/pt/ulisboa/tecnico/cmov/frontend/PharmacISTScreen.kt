@@ -20,11 +20,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import pt.ulisboa.tecnico.cmov.frontend.ui.AddPharmacyScreen
-import pt.ulisboa.tecnico.cmov.frontend.ui.LoginScreen
-import pt.ulisboa.tecnico.cmov.frontend.ui.MainScreen
-import pt.ulisboa.tecnico.cmov.frontend.ui.PharmacyScreen
-import pt.ulisboa.tecnico.cmov.frontend.ui.SearchMedicineScreen
+import pt.ulisboa.tecnico.cmov.frontend.ui.AddPharmacyRoute
+import pt.ulisboa.tecnico.cmov.frontend.ui.LoginRoute
+import pt.ulisboa.tecnico.cmov.frontend.ui.MainScreenRoute
+import pt.ulisboa.tecnico.cmov.frontend.ui.PharmacyRoute
+import pt.ulisboa.tecnico.cmov.frontend.ui.SearchMedicineRoute
 
 enum class PharmacISTScreen {
     Login,
@@ -85,34 +85,33 @@ fun PharmacISTApp(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(route = PharmacISTScreen.Login.name) {
-                LoginScreen(
-                    username = "",
-                    onUsernameChange = {},
-                    onLogin = { navController.navigate(PharmacISTScreen.Main.name) },
+                LoginRoute(
+                    onLoginClicked = { navController.navigate(PharmacISTScreen.Main.name) },
                     modifier = Modifier.fillMaxSize()
                 )
             }
             composable(route = PharmacISTScreen.Main.name) {
-                MainScreen(
+                MainScreenRoute(
                     modifier = Modifier.fillMaxSize()
                 )
             }
             composable(route = PharmacISTScreen.SearchMedicine.name) {
-                SearchMedicineScreen(
+                SearchMedicineRoute(
                     modifier = Modifier.fillMaxSize()
                 )
             }
             composable(route = PharmacISTScreen.AddPharmacy.name) {
-                AddPharmacyScreen(
+                AddPharmacyRoute(
                     modifier = Modifier.fillMaxSize()
                 )
             }
             composable(route = PharmacISTScreen.Pharmacy.name) {
-                PharmacyScreen(
-                    name = "",
+                PharmacyRoute(
+                    onLoginClicked = {},
                     modifier = Modifier.fillMaxSize()
                 )
             }
+
         }
     }
 }
