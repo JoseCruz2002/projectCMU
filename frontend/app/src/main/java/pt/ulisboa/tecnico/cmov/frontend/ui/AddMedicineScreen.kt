@@ -18,6 +18,8 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -33,13 +35,17 @@ fun AddMedicineRoute(
     modifier: Modifier = Modifier,
     viewModel: AddMedicineViewModel = viewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
     AddMedicineScreen(
-        name = "",
-        description = "",
-        quantity = "",
-        onNameChange = {},
-        onDescriptionChange = {},
-        onQuantityChange = {},
+        name = uiState.name,
+        description = uiState.description,
+        quantity = uiState.quantity,
+        onNameChange = { viewModel.updateName(it) },
+        onDescriptionChange = { viewModel.updateDescription(it) },
+        onQuantityChange = { viewModel.updateQuantity(it) },
+        onIncrement = {viewModel.incrementQuantity()},
+        onDecrement = {viewModel.decrementQuantity()},
         modifier = modifier
     )
 }
@@ -48,10 +54,12 @@ fun AddMedicineRoute(
 fun AddMedicineScreen(
     name: String,
     description: String,
-    quantity: String,
+    quantity: Int,
     onNameChange: (String) -> Unit,
     onDescriptionChange: (String) -> Unit,
     onQuantityChange: (String) -> Unit,
+    onIncrement: () -> Unit,
+    onDecrement: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -90,7 +98,7 @@ fun AddMedicineScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 OutlinedTextField(
-                    value = quantity,
+                    value = quantity.toString(),
                     onValueChange = onQuantityChange,
                     modifier = Modifier
                         .weight(1f),
@@ -101,11 +109,11 @@ fun AddMedicineScreen(
                         keyboardType = KeyboardType.Number
                     )
                 )
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(Icons.Default.Remove, contentDescription = null)
+                IconButton(onClick = onDecrement) {
+                    Icon(Icons.Default.Remove, contentDescription = "Decrease quantity")
                 }
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(Icons.Default.Add, contentDescription = null)
+                IconButton(onClick = onIncrement) {
+                    Icon(Icons.Default.Add, contentDescription = "Increase quantity")
                 }
             }
         }
@@ -140,10 +148,12 @@ fun AddMedicineScreenPreview() {
         AddMedicineScreen(
             name = "",
             description = "",
-            quantity = "",
+            quantity = 0,
             onNameChange = {},
             onDescriptionChange = {},
             onQuantityChange = {},
+            onIncrement = {},
+            onDecrement = {},
             modifier = Modifier
                 .fillMaxHeight()
         )

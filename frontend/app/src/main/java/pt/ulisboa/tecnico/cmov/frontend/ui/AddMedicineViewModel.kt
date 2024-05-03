@@ -30,8 +30,18 @@ class AddMedicineViewModel : ViewModel() {
     fun updateQuantity(updatedQuantity: String) {
         _uiState.update { currentState ->
             currentState.copy(
-                quantity = updatedQuantity
+                quantity = updatedQuantity.toInt()
             )
         }
+    }
+
+    fun incrementQuantity() {
+        val currentQuantity = _uiState.value.quantity
+        updateQuantity((currentQuantity + 1).toString())
+    }
+
+    fun decrementQuantity() {
+        val currentQuantity = _uiState.value.quantity
+        updateQuantity((currentQuantity - 1).toString())
     }
 }
