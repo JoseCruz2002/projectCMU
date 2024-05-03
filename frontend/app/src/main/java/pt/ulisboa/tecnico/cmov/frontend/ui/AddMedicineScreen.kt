@@ -26,14 +26,20 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import pt.ulisboa.tecnico.cmov.frontend.R
 import pt.ulisboa.tecnico.cmov.frontend.ui.theme.PharmacISTTheme
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun AddMedicineRoute(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: AddMedicineViewModel = viewModel()
 ) {
     AddMedicineScreen(
         name = "",
+        description = "",
+        quantity = "",
         onNameChange = {},
+        onDescriptionChange = {},
+        onQuantityChange = {},
         modifier = modifier
     )
 }
@@ -41,7 +47,11 @@ fun AddMedicineRoute(
 @Composable
 fun AddMedicineScreen(
     name: String,
+    description: String,
+    quantity: String,
     onNameChange: (String) -> Unit,
+    onDescriptionChange: (String) -> Unit,
+    onQuantityChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -67,8 +77,8 @@ fun AddMedicineScreen(
                 }
             )
             OutlinedTextField(
-                value = name,
-                onValueChange = onNameChange,
+                value = description,
+                onValueChange = onDescriptionChange,
                 modifier = Modifier
                     .fillMaxWidth(),
                 label = {
@@ -80,8 +90,8 @@ fun AddMedicineScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 OutlinedTextField(
-                    value = name,
-                    onValueChange = onNameChange,
+                    value = quantity,
+                    onValueChange = onQuantityChange,
                     modifier = Modifier
                         .weight(1f),
                     label = {
@@ -129,7 +139,11 @@ fun AddMedicineScreenPreview() {
     PharmacISTTheme {
         AddMedicineScreen(
             name = "",
+            description = "",
+            quantity = "",
             onNameChange = {},
+            onDescriptionChange = {},
+            onQuantityChange = {},
             modifier = Modifier
                 .fillMaxHeight()
         )

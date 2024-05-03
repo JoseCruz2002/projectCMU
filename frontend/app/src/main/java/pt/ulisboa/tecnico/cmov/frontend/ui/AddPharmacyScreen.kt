@@ -18,6 +18,8 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -25,14 +27,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import pt.ulisboa.tecnico.cmov.frontend.R
 import pt.ulisboa.tecnico.cmov.frontend.ui.theme.PharmacISTTheme
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun AddPharmacyRoute(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: AddPharmacyViewModel = viewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
     AddPharmacyScreen(
-        name = "",
-        onNameChange = {},
+        name = uiState.name,
+        address = uiState.address,
+        onNameChange = { viewModel.updateName(it) },
+        onAddressChange = { viewModel.updateAddress(it)  },
         modifier = modifier
     )
 }
@@ -40,7 +48,9 @@ fun AddPharmacyRoute(
 @Composable
 fun AddPharmacyScreen(
     name: String,
+    address: String,
     onNameChange: (String) -> Unit,
+    onAddressChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -66,8 +76,8 @@ fun AddPharmacyScreen(
                 }
             )
             OutlinedTextField(
-                value = name,
-                onValueChange = onNameChange,
+                value = address,
+                onValueChange = onAddressChange,
                 modifier = Modifier
                     .fillMaxWidth(),
                 label = {
@@ -82,7 +92,8 @@ fun AddPharmacyScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     IconButton(
-                        onClick = { /*TODO*/ },
+                        onClick = {
+                            },
                         colors = IconButtonDefaults.iconButtonColors(
                             containerColor = MaterialTheme.colorScheme.secondary,
                             contentColor = MaterialTheme.colorScheme.onSecondary
@@ -127,7 +138,9 @@ fun AddPharmacyScreenPreview() {
     PharmacISTTheme {
         AddPharmacyScreen(
             name = "",
+            address = "",
             onNameChange = {},
+            onAddressChange = {},
             modifier = Modifier
                 .fillMaxHeight()
         )
