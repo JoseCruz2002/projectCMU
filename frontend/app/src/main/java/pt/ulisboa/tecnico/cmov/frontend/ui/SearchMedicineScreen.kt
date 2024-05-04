@@ -13,20 +13,26 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import pt.ulisboa.tecnico.cmov.frontend.R
 import pt.ulisboa.tecnico.cmov.frontend.ui.theme.PharmacISTTheme
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun SearchMedicineRoute(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: SearchMedicineViewModel = viewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
     SearchMedicineScreen(
-        query = "",
+        query = uiState.query,
         results = listOf(),
-        onQueryChange = {},
+        onQueryChange = { viewModel.updateQuery(it) },
         onSearch = {},
         modifier = modifier
     )

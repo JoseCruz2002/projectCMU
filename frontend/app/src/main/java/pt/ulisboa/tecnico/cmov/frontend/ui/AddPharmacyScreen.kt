@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.cmov.frontend.ui
 
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,6 +29,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import pt.ulisboa.tecnico.cmov.frontend.R
 import pt.ulisboa.tecnico.cmov.frontend.ui.theme.PharmacISTTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
+import android.content.Intent
+import android.provider.MediaStore
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun AddPharmacyRoute(
@@ -53,6 +58,8 @@ fun AddPharmacyScreen(
     onAddressChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.SpaceBetween
@@ -92,8 +99,7 @@ fun AddPharmacyScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     IconButton(
-                        onClick = {
-                            },
+                        onClick = { launchCamera(context) },
                         colors = IconButtonDefaults.iconButtonColors(
                             containerColor = MaterialTheme.colorScheme.secondary,
                             contentColor = MaterialTheme.colorScheme.onSecondary
@@ -130,6 +136,17 @@ fun AddPharmacyScreen(
         }
 
     }
+}
+
+private fun launchCamera(context: Context) {
+    val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+    // Check if camera app is available
+    //if (intent.resolveActivity(context.packageManager) != null) {
+        context.startActivity(intent) // Use context to start activity
+    //} else {
+        // Handle the case where no camera app is available
+    //    Toast.makeText(context, "No camera app available", Toast.LENGTH_LONG).show()
+    //}
 }
 
 @Preview(showBackground = true)
