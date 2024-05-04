@@ -42,6 +42,7 @@ class AddMedicineViewModel : ViewModel() {
 
     fun decrementQuantity() {
         val currentQuantity = _uiState.value.quantity
-        updateQuantity((currentQuantity - 1).toString())
+        val newQuantity = maxOf(0, currentQuantity - 1)
+        updateQuantity(newQuantity.toString())
     }
 }
