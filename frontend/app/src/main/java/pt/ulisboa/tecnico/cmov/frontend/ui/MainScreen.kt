@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import com.google.maps.android.compose.GoogleMap
 import pt.ulisboa.tecnico.cmov.frontend.ui.theme.PharmacISTTheme
 
 @Composable
@@ -22,10 +23,9 @@ fun MainScreenRoute(
 fun MainScreen(
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier
-    )
-    {
+    GoogleMap(
+        modifier = Modifier.fillMaxSize()
+    ){
 
     }
 }
