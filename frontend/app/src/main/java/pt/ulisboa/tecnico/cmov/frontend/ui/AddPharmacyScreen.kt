@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.cmov.frontend.ui
 
+import android.Manifest.permission.CAMERA
 import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,9 +31,14 @@ import pt.ulisboa.tecnico.cmov.frontend.R
 import pt.ulisboa.tecnico.cmov.frontend.ui.theme.PharmacISTTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.provider.MediaStore
 import android.widget.Toast
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 
 @Composable
 fun AddPharmacyRoute(
@@ -59,6 +65,21 @@ fun AddPharmacyScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    val requestPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            // Permission granted after request, launch camera
+            launchCamera(context)
+        } else {
+            // Permission denied, explain to the user
+            Toast.makeText(
+                context,
+                "Camera permission is required to take photos. Please grant permission to proceed.",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
 
     Column(
         modifier = modifier,
@@ -99,7 +120,7 @@ fun AddPharmacyScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     IconButton(
-                        onClick = { launchCamera(context) },
+                        onClick = { requestCameraPermission(context, requestPermissionLauncher) },
                         colors = IconButtonDefaults.iconButtonColors(
                             containerColor = MaterialTheme.colorScheme.secondary,
                             contentColor = MaterialTheme.colorScheme.onSecondary
@@ -140,13 +161,20 @@ fun AddPharmacyScreen(
 
 private fun launchCamera(context: Context) {
     val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-    // Check if camera app is available
-    //if (intent.resolveActivity(context.packageManager) != null) {
-        context.startActivity(intent) // Use context to start activity
-    //} else {
-        // Handle the case where no camera app is available
-    //    Toast.makeText(context, "No camera app available", Toast.LENGTH_LONG).show()
-    //}
+    context.startActivity(intent) // Use context to start activity
+}
+
+private fun requestCameraPermission(context: Context, launcher: ActivityResultLauncher<String>) = when {
+    ContextCompat.checkSelfPermission(
+        context,
+        CAMERA
+    ) == PackageManager.PERMISSION_GRANTED -> {
+        launchCamera(context)
+    }
+    else -> {
+        // Request permission if not already granted
+        launcher.launch(CAMERA)
+    }
 }
 
 @Preview(showBackground = true)
