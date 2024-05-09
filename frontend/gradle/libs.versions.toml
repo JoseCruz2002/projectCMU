@@ -13,6 +13,9 @@ materialIconsExtended = "1.7.0-alpha07"
 navigationRuntimeKtx = "2.7.7"
 playServicesMaps = "18.2.0"
 mapsCompose = "4.4.2"
+firebaseDatabaseKtx = "21.0.0"
+firebaseAnalytics = "22.0.0"
+firebaseBom = "33.0.0"
 
 
 [libraries]
@@ -35,6 +38,9 @@ androidx-material-icons-extended = { group = "androidx.compose.material", name =
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
 play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
 maps-compose = { group = "com.google.maps.android", name = "maps-compose", version.ref = "mapsCompose" }
+firebase-database-ktx = { group = "com.google.firebase", name = "firebase-database-ktx", version.ref = "firebaseDatabaseKtx" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics", version.ref = "firebaseAnalytics" }
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

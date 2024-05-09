@@ -13,39 +13,23 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import pt.ulisboa.tecnico.cmov.frontend.PharmacISTApplication
 import pt.ulisboa.tecnico.cmov.frontend.data.PharmacyRepository
-import pt.ulisboa.tecnico.cmov.frontend.model.Pharmacy
 
-class AddPharmacyViewModel(private val pharmacyRepository: PharmacyRepository) : ViewModel() {
+class MainScreenViewModel(private val pharmacyRepository: PharmacyRepository) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(AddPharmacyUIState())
-    val uiState: StateFlow<AddPharmacyUIState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(MainScreenUIState(listOf()))
+    val uiState: StateFlow<MainScreenUIState> = _uiState.asStateFlow()
 
-    fun updateName(updatedName: String) {
-        _uiState.update { currentState ->
-            currentState.copy(
-                name = updatedName
-            )
-        }
+    init {
+        getPharmacies()
     }
 
-    fun updateAddress(updatedAddress: String) {
-        _uiState.update { currentState ->
-            currentState.copy(
-                address = updatedAddress
-            )
-        }
-    }
-
-    fun addPharmacy() {
+    private fun getPharmacies() {
         viewModelScope.launch {
-            pharmacyRepository.addPharmacy(
-                Pharmacy(
-                    name = _uiState.value.name,
-                    location = _uiState.value.address,
-                    img = "",
-                    medicines = mapOf()
+            _uiState.update { currentState ->
+                currentState.copy(
+                    pharmacies = pharmacyRepository.getPharmacies()
                 )
-            )
+            }
         }
     }
 
@@ -54,7 +38,7 @@ class AddPharmacyViewModel(private val pharmacyRepository: PharmacyRepository) :
             initializer {
                 val application = (this[APPLICATION_KEY] as PharmacISTApplication)
                 val pharmacyRepository = application.container.pharmacyRepository
-                AddPharmacyViewModel(pharmacyRepository = pharmacyRepository)
+                MainScreenViewModel(pharmacyRepository = pharmacyRepository)
             }
         }
     }

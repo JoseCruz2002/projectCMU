@@ -2,6 +2,13 @@ package pt.ulisboa.tecnico.cmov.frontend.ui
 
 import android.Manifest.permission.CAMERA
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.provider.MediaStore
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,26 +31,19 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import pt.ulisboa.tecnico.cmov.frontend.R
 import pt.ulisboa.tecnico.cmov.frontend.ui.theme.PharmacISTTheme
-import androidx.lifecycle.viewmodel.compose.viewModel
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.provider.MediaStore
-import android.widget.Toast
-import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.ContextCompat
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 
 @Composable
 fun AddPharmacyRoute(
     modifier: Modifier = Modifier,
-    viewModel: AddPharmacyViewModel = viewModel()
+    viewModel: AddPharmacyViewModel = viewModel(factory = AddPharmacyViewModel.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -51,7 +51,9 @@ fun AddPharmacyRoute(
         name = uiState.name,
         address = uiState.address,
         onNameChange = { viewModel.updateName(it) },
-        onAddressChange = { viewModel.updateAddress(it)  },
+        onAddressChange = { viewModel.updateAddress(it) },
+        onCancel = {},
+        onConfirm = { viewModel.addPharmacy() },
         modifier = modifier
     )
 }
@@ -62,6 +64,8 @@ fun AddPharmacyScreen(
     address: String,
     onNameChange: (String) -> Unit,
     onAddressChange: (String) -> Unit,
+    onCancel: () -> Unit,
+    onConfirm: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -142,13 +146,13 @@ fun AddPharmacyScreen(
             horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
         ) {
             OutlinedButton(
-                onClick = { /*TODO*/ },
+                onClick = onCancel,
                 modifier = Modifier.weight(1f)
             ) {
                 Text(stringResource(R.string.cancel))
             }
             Button(
-                onClick = { /*TODO*/ },
+                onClick = onConfirm,
                 modifier = Modifier.weight(1f),
                 enabled = true
             ) {
@@ -164,18 +168,20 @@ private fun launchCamera(context: Context) {
     context.startActivity(intent) // Use context to start activity
 }
 
-private fun requestCameraPermission(context: Context, launcher: ActivityResultLauncher<String>) = when {
-    ContextCompat.checkSelfPermission(
-        context,
-        CAMERA
-    ) == PackageManager.PERMISSION_GRANTED -> {
-        launchCamera(context)
+private fun requestCameraPermission(context: Context, launcher: ActivityResultLauncher<String>) =
+    when {
+        ContextCompat.checkSelfPermission(
+            context,
+            CAMERA
+        ) == PackageManager.PERMISSION_GRANTED -> {
+            launchCamera(context)
+        }
+
+        else -> {
+            // Request permission if not already granted
+            launcher.launch(CAMERA)
+        }
     }
-    else -> {
-        // Request permission if not already granted
-        launcher.launch(CAMERA)
-    }
-}
 
 @Preview(showBackground = true)
 @Composable
@@ -186,6 +192,8 @@ fun AddPharmacyScreenPreview() {
             address = "",
             onNameChange = {},
             onAddressChange = {},
+            onCancel = {},
+            onConfirm = {},
             modifier = Modifier
                 .fillMaxHeight()
         )
