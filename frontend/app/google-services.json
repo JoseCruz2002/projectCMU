@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "637349147390",
+    "firebase_url": "https://pharmacist-backend-84b8f-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "pharmacist-backend-84b8f",
+    "storage_bucket": "pharmacist-backend-84b8f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:637349147390:android:907b0bfc9ed5fdb0dc6baf",
+        "android_client_info": {
+          "package_name": "pt.ulisboa.tecnico.cmov.frontend"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6KuhHJ_TBPl9eScePI3dkp53pnlIxyuw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
