@@ -42,6 +42,8 @@ import pt.ulisboa.tecnico.cmov.frontend.ui.theme.PharmacISTTheme
 
 @Composable
 fun AddPharmacyRoute(
+    onCancel: () -> Unit,
+    onConfirm: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: AddPharmacyViewModel = viewModel(factory = AddPharmacyViewModel.Factory)
 ) {
@@ -52,8 +54,11 @@ fun AddPharmacyRoute(
         address = uiState.address,
         onNameChange = { viewModel.updateName(it) },
         onAddressChange = { viewModel.updateAddress(it) },
-        onCancel = {},
-        onConfirm = { viewModel.addPharmacy() },
+        onCancel = { onCancel() },
+        onConfirm = {
+            onConfirm()
+            viewModel.addPharmacy()
+        },
         modifier = modifier
     )
 }

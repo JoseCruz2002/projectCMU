@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.cmov.frontend.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -17,13 +18,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import pt.ulisboa.tecnico.cmov.frontend.R
 import pt.ulisboa.tecnico.cmov.frontend.model.Pharmacy
 import pt.ulisboa.tecnico.cmov.frontend.ui.components.MapComposeAPI
+import pt.ulisboa.tecnico.cmov.frontend.ui.theme.PharmacISTTheme
 
 @Composable
 fun MainScreenRoute(
+    onPharmacyClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MainScreenViewModel = viewModel(factory = MainScreenViewModel.Factory)
 ) {
@@ -31,6 +35,7 @@ fun MainScreenRoute(
 
     MainScreen(
         pharmacies = uiState.pharmacies,
+        onPharmacyClick = onPharmacyClick,
         query = uiState.query,
         results = listOf(),
         onQueryChange = { viewModel.updateQuery(it) },
@@ -45,6 +50,7 @@ fun MainScreenRoute(
 @Composable
 fun MainScreen(
     pharmacies: List<Pharmacy>,
+    onPharmacyClick: (String) -> Unit,
     query: String,
     results: List<String>,
     onQueryChange: (String) -> Unit,
@@ -53,7 +59,10 @@ fun MainScreen(
     active: Boolean,
     modifier: Modifier = Modifier
 ) {
-    MapComposeAPI().InitiateMap()
+    MapComposeAPI().InitiateMap(
+        pharmacies = pharmacies,
+        onPharmacyClick = onPharmacyClick
+    )
 
     Column(modifier = modifier) {
         SearchBar(
@@ -89,7 +98,7 @@ fun MainScreen(
     }
 }
 
-/*@Preview(showBackground = true)
+@Preview(showBackground = true)
 @Composable
 fun MainScreenPreview() {
     PharmacISTTheme {
@@ -101,11 +110,12 @@ fun MainScreenPreview() {
             results = listOf("result1", "other result"),
             active = false,
             pharmacies = listOf(
-                Pharmacy("myPharmacy", "Lisbon", "", mapOf()),
-                Pharmacy("Other Pharmacy", "Lisbon", "", mapOf()),
+                Pharmacy("", "myPharmacy", "Lisbon", 0.0, 0.0, "", mapOf()),
+                Pharmacy("", "Other Pharmacy", "Lisbon", 10.0, 10.0, "", mapOf()),
             ),
+            onPharmacyClick = {},
             modifier = Modifier
                 .fillMaxSize()
         )
     }
-}*/
+}

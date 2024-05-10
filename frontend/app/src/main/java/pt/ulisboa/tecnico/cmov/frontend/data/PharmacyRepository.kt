@@ -10,6 +10,7 @@ const val PHARMACY_REFERENCE_PATH = "pharmacies"
 
 interface PharmacyRepository {
     suspend fun getPharmacies(): List<Pharmacy>
+    suspend fun getPharmacy(id: String): Pharmacy
     suspend fun addPharmacy(pharmacy: Pharmacy)
 }
 
@@ -23,11 +24,24 @@ class FirebasePharmacyRepository(
     override suspend fun getPharmacies(): List<Pharmacy> {
         return try {
             val snapshot = databaseRef.get().await()
-            snapshot.getValue<Map<String, Pharmacy>>()?.values?.toList() ?: emptyList()
+            snapshot.getValue<Map<String, Pharmacy>>()?.map {
+                it.value.id = it.key
+                it.value
+            } ?: emptyList()
         } catch (e: Exception) {
             // Handle exception
             emptyList()
         }
+    }
+
+    override suspend fun getPharmacy(id: String): Pharmacy {
+        return databaseRef
+            .child(id)
+            .get()
+            .await()
+            .getValue<Pharmacy>()
+            ?.apply { this.id = id }
+            ?: Pharmacy()
     }
 
     override suspend fun addPharmacy(pharmacy: Pharmacy) {

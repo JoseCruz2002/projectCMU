@@ -37,7 +37,10 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.CameraMoveStartedReason
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import pt.ulisboa.tecnico.cmov.frontend.model.Pharmacy
 
 private const val TAG = "LocationTrackActivity"
 private const val zoom = 15f
@@ -55,7 +58,10 @@ class MapComposeAPI() {
     var hadPermission: Boolean = true
 
     @Composable
-    fun InitiateMap() {
+    fun InitiateMap(
+        pharmacies: List<Pharmacy>,
+        onPharmacyClick: (String) -> Unit
+    ) {
         val context = LocalContext.current
         val requestPermissionLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.RequestPermission()
@@ -72,14 +78,27 @@ class MapComposeAPI() {
                 permissionGranted = false
             }
         }
-        requestLocationPermission(context = context, launcher = requestPermissionLauncher)
+        requestLocationPermission(
+            context = context,
+            launcher = requestPermissionLauncher,
+            onPharmacyClick = onPharmacyClick,
+            pharmacies = pharmacies
+        )
         if (!hadPermission) {
-            CreateMap(locPermissionGranted = permissionGranted!!)
+            CreateMap(
+                locPermissionGranted = permissionGranted!!,
+                pharmacies = pharmacies,
+                onPharmacyClick = onPharmacyClick
+            )
         }
     }
 
     @Composable
-    fun CreateMap(locPermissionGranted: Boolean) {
+    fun CreateMap(
+        locPermissionGranted: Boolean,
+        pharmacies: List<Pharmacy>,
+        onPharmacyClick: (String) -> Unit
+    ) {
 
         Log.d(TAG, "Location Permission: $locPermissionGranted")
 
@@ -151,8 +170,7 @@ class MapComposeAPI() {
             },
             // This listener overrides the behavior for the location button. It is intended to be used when a
             // custom behavior is needed.
-            onMyLocationButtonClick =
-            {
+            onMyLocationButtonClick = {
                 Log.d(
                     TAG,
                     "Overriding the onMyLocationButtonClick with this Log"
@@ -160,7 +178,18 @@ class MapComposeAPI() {
             },
             locationSource = locationSource,
             properties = mapProperties
-        )
+        ) {
+            pharmacies.forEach { pharmacy ->
+                Marker(
+                    contentDescription = pharmacy.name,
+                    state = MarkerState(LatLng(pharmacy.latitude, pharmacy.longitude)),
+                    onClick = {
+                        onPharmacyClick(pharmacy.id)
+                        true
+                    }
+                )
+            }
+        }
         if (!isMapLoaded) {
             AnimatedVisibility(
                 modifier = Modifier.fillMaxSize(),
@@ -176,6 +205,8 @@ class MapComposeAPI() {
     @Composable
     private fun requestLocationPermission(
         context: Context,
+        pharmacies: List<Pharmacy>,
+        onPharmacyClick: (String) -> Unit,
         launcher: ActivityResultLauncher<String>
     ) =
         when {
@@ -184,7 +215,11 @@ class MapComposeAPI() {
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED -> {
                 Log.d(TAG, "Already had location permissions")
-                CreateMap(locPermissionGranted = true)
+                CreateMap(
+                    locPermissionGranted = true,
+                    pharmacies = pharmacies,
+                    onPharmacyClick = onPharmacyClick
+                )
             }
 
             else -> {
@@ -213,10 +248,10 @@ private class MyLocationSource(private val context: Context) : LocationSource {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
         val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000)
-            .setIntervalMillis(1000) // Sets the interval for location updates
-            .setMinUpdateIntervalMillis(1000 / 2) // Sets the fastest allowed interval of location updates.
+            .setIntervalMillis(100000) // Sets the interval for location updates
+            .setMinUpdateIntervalMillis(100000 / 2) // Sets the fastest allowed interval of location updates.
             .setWaitForAccurateLocation(true) // Want Accurate location updates make it true or you get approximate updates
-            .setMaxUpdateDelayMillis(1000) // Sets the longest a location update may be delayed.
+            .setMaxUpdateDelayMillis(100000) // Sets the longest a location update may be delayed.
             .build()
 
         locationCallback = object : LocationCallback() {

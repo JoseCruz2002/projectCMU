@@ -26,24 +26,32 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import pt.ulisboa.tecnico.cmov.frontend.R
+import pt.ulisboa.tecnico.cmov.frontend.model.Medicine
+import pt.ulisboa.tecnico.cmov.frontend.model.Pharmacy
 import pt.ulisboa.tecnico.cmov.frontend.ui.components.Action
 import pt.ulisboa.tecnico.cmov.frontend.ui.components.ActionRow
 import pt.ulisboa.tecnico.cmov.frontend.ui.theme.PharmacISTTheme
 
 @Composable
 fun PharmacyRoute(
-    onLoginClicked: () -> Unit,
-    modifier: Modifier = Modifier
+    pharmacyId: String,
+    modifier: Modifier = Modifier,
+    viewModel: PharmacyViewModel = viewModel(factory = PharmacyViewModel.Factory)
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+    viewModel.getPharmacy(pharmacyId)
+
     PharmacyScreen(
-        name = "",
+        pharmacy = uiState.pharmacy,
         favorite = true,
         medicines = listOf(),
         modifier
@@ -52,9 +60,9 @@ fun PharmacyRoute(
 
 @Composable
 fun PharmacyScreen(
-    name: String,
+    pharmacy: Pharmacy,
     favorite: Boolean,
-    medicines: List<Medicine>,
+    medicines: List<Pair<Medicine, Long>>,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -67,7 +75,7 @@ fun PharmacyScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = name,
+                text = pharmacy.name,
                 style = MaterialTheme.typography.headlineMedium
             )
             Spacer(modifier = Modifier.weight(1f))
@@ -132,10 +140,10 @@ fun PharmacyScreen(
                         .clickable { },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(medicine.name)
+                    Text(medicine.first.name)
                     Spacer(modifier = Modifier.weight(1f))
                     Text(
-                        text = "x" + medicine.quantity.toString(),
+                        text = "x" + medicine.second.toString(),
                         style = MaterialTheme.typography.titleMedium
                     )
                     IconButton(onClick = { /*TODO*/ }) {
@@ -147,7 +155,6 @@ fun PharmacyScreen(
                 }
             }
         }
-
     }
 }
 
@@ -159,23 +166,26 @@ private val actions = listOf(
     )
 )
 
-data class Medicine(
-    val name: String,
-    val quantity: Int,
-)
-
 @Preview(showBackground = true)
 @Composable
 fun PharmacyScreenPreview() {
     val medicines = listOf(
-        Medicine("benuron", 5),
-        Medicine("benurin", 5),
-        Medicine("benurum", 5)
+        Pair(Medicine("benuron", "", "", emptyList()), 65L),
+        Pair(Medicine("benurin", "", "", emptyList()), 4L),
+        Pair(Medicine("benurum", "", "", emptyList()), 13L),
     )
 
     PharmacISTTheme {
         PharmacyScreen(
-            "My Pharmacy",
+            Pharmacy(
+                id = "",
+                name = "My Farmacy",
+                location = "",
+                latitude = 0.0,
+                longitude = 0.0,
+                img = "",
+                medicines = emptyMap()
+            ),
             true,
             medicines = medicines,
             modifier = Modifier

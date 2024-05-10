@@ -41,7 +41,7 @@ fun BottomNav(
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreen = PharmacISTScreen.valueOf(
-        backStackEntry?.destination?.route ?: PharmacISTScreen.Login.name
+        backStackEntry?.destination?.route?.substringBefore("/") ?: PharmacISTScreen.Login.name
     )
 
     NavigationBar {
@@ -92,6 +92,9 @@ fun PharmacISTApp(
             }
             composable(route = PharmacISTScreen.Main.name) {
                 MainScreenRoute(
+                    onPharmacyClick = { pharmacyId ->
+                        navController.navigate("${PharmacISTScreen.Pharmacy.name}/$pharmacyId")
+                    },
                     modifier = Modifier.fillMaxSize()
                 )
             }
@@ -102,16 +105,17 @@ fun PharmacISTApp(
             }
             composable(route = PharmacISTScreen.AddPharmacy.name) {
                 AddPharmacyRoute(
+                    onCancel = { navController.navigate(PharmacISTScreen.Main.name) },
+                    onConfirm = { navController.navigate(PharmacISTScreen.Main.name) },
                     modifier = Modifier.fillMaxSize()
                 )
             }
-            composable(route = PharmacISTScreen.Pharmacy.name) {
+            composable(route = "${PharmacISTScreen.Pharmacy.name}/{pharmacyId}") { backStackEntry ->
                 PharmacyRoute(
-                    onLoginClicked = {},
+                    pharmacyId = backStackEntry.arguments?.getString("pharmacyId")!!,
                     modifier = Modifier.fillMaxSize()
                 )
             }
-
         }
     }
 }
