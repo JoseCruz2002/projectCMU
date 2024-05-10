@@ -42,4 +42,20 @@ class MainScreenViewModel(private val pharmacyRepository: PharmacyRepository) : 
             }
         }
     }
+
+    fun updateQuery(newQuery: String) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                query = newQuery
+            )
+        }
+    }
+
+    fun updateActive(newActive: Boolean) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                active = newActive
+            )
+        }
+    }
 }

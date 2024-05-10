@@ -17,4 +17,5 @@
     <string name="medicine_quantity">Quantity</string>
     <string name="medicine_name">Name</string>
     <string name="medicine_pharmacies">Available at</string>
+    <string name="search_location">Search Location</string>
 </resources>

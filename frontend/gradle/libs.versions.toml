@@ -16,6 +16,7 @@ mapsCompose = "4.4.2"
 firebaseDatabaseKtx = "21.0.0"
 firebaseAnalytics = "22.0.0"
 firebaseBom = "33.0.0"
+playServicesLocation = "21.2.0"
 
 
 [libraries]
@@ -41,6 +42,7 @@ maps-compose = { group = "com.google.maps.android", name = "maps-compose", versi
 firebase-database-ktx = { group = "com.google.firebase", name = "firebase-database-ktx", version.ref = "firebaseDatabaseKtx" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics", version.ref = "firebaseAnalytics" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

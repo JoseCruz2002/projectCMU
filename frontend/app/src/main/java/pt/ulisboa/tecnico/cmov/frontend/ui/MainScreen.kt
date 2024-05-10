@@ -1,24 +1,26 @@
 package pt.ulisboa.tecnico.cmov.frontend.ui
 
-import android.Manifest
-import android.content.Context
-import android.content.pm.PackageManager
-import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.SearchBar
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.content.ContextCompat
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.maps.android.compose.GoogleMap
+import pt.ulisboa.tecnico.cmov.frontend.R
 import pt.ulisboa.tecnico.cmov.frontend.model.Pharmacy
-import pt.ulisboa.tecnico.cmov.frontend.ui.theme.PharmacISTTheme
+import pt.ulisboa.tecnico.cmov.frontend.ui.components.MapComposeAPI
 
 @Composable
 fun MainScreenRoute(
@@ -29,56 +31,75 @@ fun MainScreenRoute(
 
     MainScreen(
         pharmacies = uiState.pharmacies,
+        query = uiState.query,
+        results = listOf(),
+        onQueryChange = { viewModel.updateQuery(it) },
+        onActiveChange = { viewModel.updateActive(it) },
+        onSearch = { TODO("Not yet implemented") },
+        active = uiState.active,
         modifier = modifier
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     pharmacies: List<Pharmacy>,
+    query: String,
+    results: List<String>,
+    onQueryChange: (String) -> Unit,
+    onActiveChange: (Boolean) -> Unit,
+    onSearch: (String) -> Unit,
+    active: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-    val requestPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            //load map in exact location
-            //TODO
-        } else {
-            //load map in predefined location or last known location
-            //TODO
+    MapComposeAPI().InitiateMap()
+
+    Column(modifier = modifier) {
+        SearchBar(
+            query = query,
+            onQueryChange = onQueryChange,
+            onActiveChange = onActiveChange,
+            onSearch = onSearch,
+            active = active,
+            placeholder = {
+                Text(
+                    stringResource(id = R.string.search_location)
+                )
+            },
+            modifier = Modifier
+                .padding(dimensionResource(id = R.dimen.padding_medium))
+                .fillMaxWidth()
+            /*.offset(x = 0.dp, y = -50.dp)*/,
+            leadingIcon = { Icon(imageVector = Icons.Outlined.Search, contentDescription = null) }
+        ) {
+            results.forEach { result ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    Text(
+                        result,
+                        modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
+                    )
+                }
+                Divider()
+            }
         }
-    }
-
-    GoogleMap(
-        modifier = Modifier.fillMaxSize(),
-        onMapLoaded = {requestLocationPermission(context, requestPermissionLauncher)}
-    ) {
-
     }
 }
 
-private fun requestLocationPermission(context: Context, launcher: ActivityResultLauncher<String>) =
-    when {
-        ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED -> {
-            //load map in exact location
-            //TODO
-        }
-        else -> {
-            // Request permission if not already granted
-            launcher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-        }
-    }
-
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 fun MainScreenPreview() {
     PharmacISTTheme {
         MainScreen(
+            query = "Search location...",
+            onQueryChange = {},
+            onActiveChange = {},
+            onSearch = {},
+            results = listOf("result1", "other result"),
+            active = false,
             pharmacies = listOf(
                 Pharmacy("myPharmacy", "Lisbon", "", mapOf()),
                 Pharmacy("Other Pharmacy", "Lisbon", "", mapOf()),
@@ -87,4 +108,4 @@ fun MainScreenPreview() {
                 .fillMaxSize()
         )
     }
-}
+}*/
