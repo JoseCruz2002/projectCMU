@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.cmov.frontend.ui.pharmacy_screen
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,10 +32,18 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.CameraPositionState
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapUiSettings
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
 import pt.ulisboa.tecnico.cmov.frontend.R
 import pt.ulisboa.tecnico.cmov.frontend.model.Medicine
 import pt.ulisboa.tecnico.cmov.frontend.model.Pharmacy
@@ -97,14 +107,12 @@ fun PharmacyScreen(
         ) {
             Row {
                 // Placeholders for image and map
-                Surface(
+                Map(
+                    pharmacy = pharmacy,
                     modifier = Modifier
                         .weight(1f)
-                        .fillMaxHeight(),
-                    color = MaterialTheme.colorScheme.primaryContainer
-                ) {
-
-                }
+                        .fillMaxHeight()
+                )
                 Surface(
                     modifier = Modifier
                         .weight(1f)
@@ -115,8 +123,22 @@ fun PharmacyScreen(
                 }
             }
         }
+        val context = LocalContext.current
         ActionRow(
-            actions = actions,
+            actions = listOf(
+                Action(
+                    icon = Icons.Default.Directions,
+                    label = "Directions",
+                    onClick = {
+                        val mapIntent = Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse("google.navigation:q=${pharmacy.latitude},${pharmacy.longitude}")
+                        )
+                        mapIntent.setPackage("com.google.android.apps.maps")
+                        context.startActivity(mapIntent)
+                    }
+                )
+            ),
             modifier = Modifier.fillMaxWidth()
         )
         Row(
@@ -158,13 +180,35 @@ fun PharmacyScreen(
     }
 }
 
-private val actions = listOf(
-    Action(
-        icon = Icons.Default.Directions,
-        label = "Directions",
-        onClick = {}
-    )
-)
+@Composable
+private fun Map(pharmacy: Pharmacy, modifier: Modifier = Modifier) {
+    GoogleMap(
+        modifier = modifier,
+        cameraPositionState = CameraPositionState(
+            CameraPosition(
+                LatLng(pharmacy.latitude, pharmacy.longitude),
+                15f, 0f, 0f
+            )
+        ),
+        uiSettings = MapUiSettings(
+            compassEnabled = false,
+            indoorLevelPickerEnabled = false,
+            mapToolbarEnabled = false,
+            myLocationButtonEnabled = false,
+            rotationGesturesEnabled = false,
+            scrollGesturesEnabled = false,
+            scrollGesturesEnabledDuringRotateOrZoom = false,
+            tiltGesturesEnabled = false,
+            zoomControlsEnabled = false,
+            zoomGesturesEnabled = false
+        )
+    ) {
+        Marker(
+            contentDescription = pharmacy.name,
+            state = MarkerState(LatLng(pharmacy.latitude, pharmacy.longitude)),
+        )
+    }
+}
 
 @Preview(showBackground = true)
 @Composable
