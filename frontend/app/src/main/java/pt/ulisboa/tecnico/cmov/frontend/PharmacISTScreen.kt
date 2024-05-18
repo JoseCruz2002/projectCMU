@@ -20,11 +20,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import pt.ulisboa.tecnico.cmov.frontend.ui.AddPharmacyRoute
-import pt.ulisboa.tecnico.cmov.frontend.ui.LoginRoute
-import pt.ulisboa.tecnico.cmov.frontend.ui.MainScreenRoute
-import pt.ulisboa.tecnico.cmov.frontend.ui.PharmacyRoute
-import pt.ulisboa.tecnico.cmov.frontend.ui.SearchMedicineRoute
+import pt.ulisboa.tecnico.cmov.frontend.ui.add_pharmacy_screen.AddPharmacyRoute
+import pt.ulisboa.tecnico.cmov.frontend.ui.login_screen.LoginRoute
+import pt.ulisboa.tecnico.cmov.frontend.ui.main_screen.MainScreenRoute
+import pt.ulisboa.tecnico.cmov.frontend.ui.pharmacy_screen.PharmacyRoute
+import pt.ulisboa.tecnico.cmov.frontend.ui.search_medicine_screen.SearchMedicineRoute
 
 enum class PharmacISTScreen {
     Login,

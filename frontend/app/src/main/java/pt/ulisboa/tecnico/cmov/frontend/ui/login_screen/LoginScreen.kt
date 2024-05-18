@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cmov.frontend.ui
+package pt.ulisboa.tecnico.cmov.frontend.ui.login_screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

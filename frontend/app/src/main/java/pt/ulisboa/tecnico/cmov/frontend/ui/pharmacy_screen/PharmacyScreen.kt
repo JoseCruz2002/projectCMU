@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cmov.frontend.ui
+package pt.ulisboa.tecnico.cmov.frontend.ui.pharmacy_screen
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

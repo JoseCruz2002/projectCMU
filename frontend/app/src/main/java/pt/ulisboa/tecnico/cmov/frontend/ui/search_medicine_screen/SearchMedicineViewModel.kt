@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cmov.frontend.ui
+package pt.ulisboa.tecnico.cmov.frontend.ui.search_medicine_screen
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

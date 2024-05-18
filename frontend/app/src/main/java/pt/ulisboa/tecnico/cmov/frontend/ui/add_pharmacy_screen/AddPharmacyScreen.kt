@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cmov.frontend.ui
+package pt.ulisboa.tecnico.cmov.frontend.ui.add_pharmacy_screen
 
 import android.Manifest.permission.CAMERA
 import android.content.Context

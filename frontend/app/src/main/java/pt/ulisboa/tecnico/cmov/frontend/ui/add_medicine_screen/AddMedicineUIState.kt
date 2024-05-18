@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cmov.frontend.ui
+package pt.ulisboa.tecnico.cmov.frontend.ui.add_medicine_screen
 
 data class AddMedicineUIState(
     val name: String = "",

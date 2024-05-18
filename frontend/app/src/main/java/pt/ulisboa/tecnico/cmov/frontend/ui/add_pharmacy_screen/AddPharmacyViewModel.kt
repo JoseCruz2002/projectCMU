@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cmov.frontend.ui
+package pt.ulisboa.tecnico.cmov.frontend.ui.add_pharmacy_screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -15,24 +15,37 @@ import pt.ulisboa.tecnico.cmov.frontend.PharmacISTApplication
 import pt.ulisboa.tecnico.cmov.frontend.data.PharmacyRepository
 import pt.ulisboa.tecnico.cmov.frontend.model.Pharmacy
 
-class PharmacyViewModel(
-    private val pharmacyRepository: PharmacyRepository,
-) : ViewModel() {
+class AddPharmacyViewModel(private val pharmacyRepository: PharmacyRepository) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(PharmacyUIState(Pharmacy()))
-    val uiState: StateFlow<PharmacyUIState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(AddPharmacyUIState())
+    val uiState: StateFlow<AddPharmacyUIState> = _uiState.asStateFlow()
 
-    init {
-        //TODO("Call to getPharmacy should be done on init")
+    fun updateName(updatedName: String) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                name = updatedName
+            )
+        }
     }
 
-    fun getPharmacy(pharmacyId: String) {
+    fun updateAddress(updatedAddress: String) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                address = updatedAddress
+            )
+        }
+    }
+
+    fun addPharmacy() {
         viewModelScope.launch {
-            _uiState.update { currentState ->
-                currentState.copy(
-                    pharmacy = pharmacyRepository.getPharmacy(pharmacyId)
+            pharmacyRepository.addPharmacy(
+                Pharmacy(
+                    name = _uiState.value.name,
+                    location = _uiState.value.address,
+                    img = "",
+                    medicines = mapOf()
                 )
-            }
+            )
         }
     }
 
@@ -41,7 +54,7 @@ class PharmacyViewModel(
             initializer {
                 val application = (this[APPLICATION_KEY] as PharmacISTApplication)
                 val pharmacyRepository = application.container.pharmacyRepository
-                PharmacyViewModel(pharmacyRepository = pharmacyRepository)
+                AddPharmacyViewModel(pharmacyRepository = pharmacyRepository)
             }
         }
     }

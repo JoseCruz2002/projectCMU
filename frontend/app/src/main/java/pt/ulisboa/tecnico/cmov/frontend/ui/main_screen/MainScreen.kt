@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cmov.frontend.ui
+package pt.ulisboa.tecnico.cmov.frontend.ui.main_screen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cmov.frontend.ui
+package pt.ulisboa.tecnico.cmov.frontend.ui.medicine_sheet
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

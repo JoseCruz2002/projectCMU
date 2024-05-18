@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cmov.frontend.ui
+package pt.ulisboa.tecnico.cmov.frontend.ui.main_screen
 
 import pt.ulisboa.tecnico.cmov.frontend.model.Pharmacy
 
