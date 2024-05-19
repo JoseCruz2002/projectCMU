@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.cmov.frontend.ui.main_screen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -15,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -64,7 +66,10 @@ fun MainScreen(
         onPharmacyClick = onPharmacyClick
     )
 
-    Column(modifier = modifier) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         SearchBar(
             query = query,
             onQueryChange = onQueryChange,
@@ -77,9 +82,9 @@ fun MainScreen(
                 )
             },
             modifier = Modifier
-                .padding(dimensionResource(id = R.dimen.padding_medium))
-                .fillMaxWidth()
-            /*.offset(x = 0.dp, y = -50.dp)*/,
+                .padding(dimensionResource(R.dimen.padding_small))
+                .fillMaxWidth(),
+            windowInsets = WindowInsets(0, 0, 0, 0),
             leadingIcon = { Icon(imageVector = Icons.Outlined.Search, contentDescription = null) }
         ) {
             results.forEach { result ->
