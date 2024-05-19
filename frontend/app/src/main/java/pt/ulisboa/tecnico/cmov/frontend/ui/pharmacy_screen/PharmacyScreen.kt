@@ -53,12 +53,10 @@ import pt.ulisboa.tecnico.cmov.frontend.ui.theme.PharmacISTTheme
 
 @Composable
 fun PharmacyRoute(
-    pharmacyId: String,
     modifier: Modifier = Modifier,
     viewModel: PharmacyViewModel = viewModel(factory = PharmacyViewModel.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    viewModel.getPharmacy(pharmacyId)
 
     PharmacyScreen(
         pharmacy = uiState.pharmacy,

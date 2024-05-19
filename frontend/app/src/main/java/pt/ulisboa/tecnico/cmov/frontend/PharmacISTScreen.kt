@@ -34,6 +34,8 @@ enum class PharmacISTScreen {
     Pharmacy,
 }
 
+const val PHARMACY_ID_ARG = "pharmacyId"
+
 @Composable
 fun BottomNav(
     navController: NavHostController,
@@ -110,9 +112,8 @@ fun PharmacISTApp(
                     modifier = Modifier.fillMaxSize()
                 )
             }
-            composable(route = "${PharmacISTScreen.Pharmacy.name}/{pharmacyId}") { backStackEntry ->
+            composable(route = "${PharmacISTScreen.Pharmacy.name}/{$PHARMACY_ID_ARG}") { backStackEntry ->
                 PharmacyRoute(
-                    pharmacyId = backStackEntry.arguments?.getString("pharmacyId")!!,
                     modifier = Modifier.fillMaxSize()
                 )
             }
