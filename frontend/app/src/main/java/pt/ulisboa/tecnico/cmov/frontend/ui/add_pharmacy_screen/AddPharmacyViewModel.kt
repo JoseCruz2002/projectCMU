@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.cmov.frontend.ui.add_pharmacy_screen
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -36,6 +37,14 @@ class AddPharmacyViewModel(private val pharmacyRepository: PharmacyRepository) :
         }
     }
 
+    fun updateUri(updatedUri: Uri) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                imageUri = updatedUri
+            )
+        }
+    }
+
     fun addPharmacy() {
         viewModelScope.launch {
             pharmacyRepository.addPharmacy(
@@ -44,7 +53,8 @@ class AddPharmacyViewModel(private val pharmacyRepository: PharmacyRepository) :
                     location = _uiState.value.address,
                     img = "",
                     medicines = mapOf()
-                )
+                ),
+                uri = _uiState.value.imageUri
             )
         }
     }

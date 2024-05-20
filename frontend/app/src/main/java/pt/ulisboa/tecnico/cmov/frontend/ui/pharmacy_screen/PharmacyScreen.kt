@@ -25,18 +25,20 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.CameraPositionState
@@ -111,14 +113,18 @@ fun PharmacyScreen(
                         .weight(1f)
                         .fillMaxHeight()
                 )
-                Surface(
+                AsyncImage(
+                    model = ImageRequest
+                        .Builder(context = LocalContext.current)
+                        .data(pharmacy.img)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = pharmacy.name,
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .weight(1f)
-                        .fillMaxHeight(),
-                    color = MaterialTheme.colorScheme.secondaryContainer
-                ) {
-
-                }
+                        .fillMaxHeight()
+                )
             }
         }
         val context = LocalContext.current

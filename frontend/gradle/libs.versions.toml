@@ -17,6 +17,8 @@ firebaseDatabaseKtx = "21.0.0"
 firebaseAnalytics = "22.0.0"
 firebaseBom = "33.0.0"
 playServicesLocation = "21.2.0"
+firebaseStorage = "21.0.0"
+coilCompose = "2.6.0"
 
 
 [libraries]
@@ -43,6 +45,8 @@ firebase-database-ktx = { group = "com.google.firebase", name = "firebase-databa
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics", version.ref = "firebaseAnalytics" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+firebase-storage = { group = "com.google.firebase", name = "firebase-storage", version.ref = "firebaseStorage" }
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilCompose" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
