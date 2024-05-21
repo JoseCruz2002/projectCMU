@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Directions
@@ -75,8 +77,10 @@ fun PharmacyScreen(
     medicines: List<Pair<Medicine, Long>>,
     modifier: Modifier = Modifier
 ) {
+    val scrollState = rememberScrollState()
+
     Column(
-        modifier = modifier
+        modifier = modifier.verticalScroll(scrollState)
             .padding(dimensionResource(R.dimen.padding_medium)),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
     ) {
@@ -132,7 +136,7 @@ fun PharmacyScreen(
             actions = listOf(
                 Action(
                     icon = Icons.Default.Directions,
-                    label = "Directions",
+                    label = stringResource(R.string.directions),
                     onClick = {
                         val mapIntent = Intent(
                             Intent.ACTION_VIEW,

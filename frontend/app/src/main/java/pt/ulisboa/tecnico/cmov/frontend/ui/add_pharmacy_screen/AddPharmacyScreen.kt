@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.PhotoCamera
 import androidx.compose.material3.Button
@@ -83,7 +85,7 @@ fun AddPharmacyRoute(
             // Permission denied, explain to the user
             Toast.makeText(
                 context,
-                "Camera permission is required to take photos. Please grant permission to proceed.",
+                context.getString(R.string.photo_permission_toast),
                 Toast.LENGTH_SHORT
             ).show()
         }
@@ -120,8 +122,10 @@ fun AddPharmacyScreen(
     onConfirm: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val scrollState = rememberScrollState()
+
     Column(
-        modifier = modifier,
+        modifier = modifier.verticalScroll(scrollState),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(
@@ -216,7 +220,7 @@ private fun requestCameraPermission(
         }
     }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, locale = "en")
 @Composable
 fun AddPharmacyScreenPreview() {
     PharmacISTTheme {

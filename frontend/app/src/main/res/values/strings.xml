@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PharmacIST</string>
+    <string name="app_name" translatable="false">PharmacIST</string>
     <string name="username">Username</string>
     <string name="login">Login</string>
     <string name="nav_main">Map</string>
@@ -18,4 +18,6 @@
     <string name="medicine_name">Name</string>
     <string name="medicine_pharmacies">Available at</string>
     <string name="search_location">Search Location</string>
+    <string name="directions">Directions</string>
+    <string name="photo_permission_toast">Camera permission is required to take photos. Please grant permission to proceed.</string>
 </resources>
