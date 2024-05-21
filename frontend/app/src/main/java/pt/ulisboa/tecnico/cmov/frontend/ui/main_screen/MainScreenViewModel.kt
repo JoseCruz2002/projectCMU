@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.cmov.frontend.ui.main_screen
 
+import android.location.Location
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -13,6 +14,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import pt.ulisboa.tecnico.cmov.frontend.PharmacISTApplication
 import pt.ulisboa.tecnico.cmov.frontend.data.PharmacyRepository
+
+private const val TAG: String = "MainScreenViewModel"
 
 class MainScreenViewModel(private val pharmacyRepository: PharmacyRepository) : ViewModel() {
 
@@ -58,4 +61,37 @@ class MainScreenViewModel(private val pharmacyRepository: PharmacyRepository) : 
             )
         }
     }
+
+    fun updateLocation(newLocation: Location) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                currentLocation = newLocation
+            )
+        }
+    }
+
+    fun updateLocationPermission(newPermission: Boolean) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                locationPermission = newPermission
+            )
+        }
+    }
+
+    fun updateGoToLocation(newGoToLocation: Boolean) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                goToLocation = newGoToLocation
+            )
+        }
+    }
+
+    fun updateJustSearchedLocation(newJustSearchedLocation: Boolean) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                justSearchedLocation = newJustSearchedLocation
+            )
+        }
+    }
+
 }

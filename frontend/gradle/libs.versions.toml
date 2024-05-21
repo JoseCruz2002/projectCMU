@@ -19,6 +19,11 @@ firebaseBom = "33.0.0"
 playServicesLocation = "21.2.0"
 firebaseStorage = "21.0.0"
 coilCompose = "2.6.0"
+places = "3.4.0"
+playServicesPlaces = "17.0.0"
+okhttp = "5.0.0-alpha.14"
+loggingInterceptor = "5.0.0-alpha.14"
+gson = "2.11.0"
 
 
 [libraries]
@@ -47,6 +52,11 @@ firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.r
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 firebase-storage = { group = "com.google.firebase", name = "firebase-storage", version.ref = "firebaseStorage" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilCompose" }
+places = { group = "com.google.android.libraries.places", name = "places", version.ref = "places" }
+play-services-places = { group = "com.google.android.gms", name = "play-services-places", version.ref = "playServicesPlaces" }
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "loggingInterceptor" }
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
