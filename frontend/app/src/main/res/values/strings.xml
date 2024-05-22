@@ -21,4 +21,7 @@
     <string name="directions">Directions</string>
     <string name="photo_permission_toast">Camera permission is required to take photos. Please grant permission to proceed.</string>
     <string name="scan_bar_code">Scan Bar Code</string>
+    <string name="share">Share</string>
+    <string name="share_Text">Pharmacy: %1$s \nAddress: %2$s</string>
+    <string name="share_via">Share with</string>
 </resources>

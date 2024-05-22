@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Directions
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.Card
@@ -169,6 +170,25 @@ fun PharmacyScreen(
                         )
                         mapIntent.setPackage("com.google.android.apps.maps")
                         context.startActivity(mapIntent)
+                    }
+                ),
+                Action(
+                    icon = Icons.Default.Share,
+                    label = stringResource(R.string.share),
+                    onClick = {
+                        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.app_name)) // Optional subject
+                            putExtra(Intent.EXTRA_TEXT,
+                                context.getString(
+                                    R.string.share_Text,
+                                    pharmacy.name,
+                                    pharmacy.location
+                                )) // Content to be shared
+                        }
+                        val chooserIntent = Intent.createChooser(shareIntent,
+                            context.getString(R.string.share_via))
+                        context.startActivity(chooserIntent)
                     }
                 )
             ),
