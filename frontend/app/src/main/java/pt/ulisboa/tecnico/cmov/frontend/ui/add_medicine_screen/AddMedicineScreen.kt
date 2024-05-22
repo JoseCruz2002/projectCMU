@@ -32,6 +32,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun AddMedicineRoute(
+    onConfirm: () -> Unit,
+    onCancel: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: AddMedicineViewModel = viewModel()
 ) {
@@ -46,6 +48,8 @@ fun AddMedicineRoute(
         onQuantityChange = { viewModel.updateQuantity(it) },
         onIncrement = {viewModel.incrementQuantity()},
         onDecrement = {viewModel.decrementQuantity()},
+        onConfirm = onConfirm,
+        onCancel = onCancel,
         modifier = modifier
     )
 }
@@ -60,6 +64,8 @@ fun AddMedicineScreen(
     onQuantityChange: (String) -> Unit,
     onIncrement: () -> Unit,
     onDecrement: () -> Unit,
+    onConfirm: () -> Unit,
+    onCancel: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -124,13 +130,13 @@ fun AddMedicineScreen(
             horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
         ) {
             OutlinedButton(
-                onClick = { /*TODO*/ },
+                onClick = onCancel,
                 modifier = Modifier.weight(1f)
             ) {
                 Text(stringResource(R.string.cancel))
             }
             Button(
-                onClick = { /*TODO*/ },
+                onClick = onConfirm,
                 modifier = Modifier.weight(1f),
                 enabled = true
             ) {
@@ -154,6 +160,8 @@ fun AddMedicineScreenPreview() {
             onQuantityChange = {},
             onIncrement = {},
             onDecrement = {},
+            onConfirm = {},
+            onCancel = {},
             modifier = Modifier
                 .fillMaxHeight()
         )

@@ -20,9 +20,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import pt.ulisboa.tecnico.cmov.frontend.ui.add_medicine_screen.AddMedicineRoute
 import pt.ulisboa.tecnico.cmov.frontend.ui.add_pharmacy_screen.AddPharmacyRoute
 import pt.ulisboa.tecnico.cmov.frontend.ui.login_screen.LoginRoute
 import pt.ulisboa.tecnico.cmov.frontend.ui.main_screen.MainScreenRoute
+import pt.ulisboa.tecnico.cmov.frontend.ui.medicine_screen.MedicineRoute
 import pt.ulisboa.tecnico.cmov.frontend.ui.pharmacy_screen.PharmacyRoute
 import pt.ulisboa.tecnico.cmov.frontend.ui.search_medicine_screen.SearchMedicineRoute
 
@@ -32,9 +34,12 @@ enum class PharmacISTScreen {
     SearchMedicine,
     AddPharmacy,
     Pharmacy,
+    AddMedicine,
+    Medicine,
 }
 
 const val PHARMACY_ID_ARG = "pharmacyId"
+const val MEDICINE_ID_ARG = "medicineId"
 
 @Composable
 fun BottomNav(
@@ -46,7 +51,7 @@ fun BottomNav(
         backStackEntry?.destination?.route?.substringBefore("/") ?: PharmacISTScreen.Login.name
     )
 
-    NavigationBar {
+    NavigationBar(modifier = modifier) {
         NavigationBarItem(
             icon = { Icon(imageVector = Icons.Outlined.Map, contentDescription = null) },
             label = { Text(stringResource(R.string.nav_main)) },
@@ -114,6 +119,19 @@ fun PharmacISTApp(
             }
             composable(route = "${PharmacISTScreen.Pharmacy.name}/{$PHARMACY_ID_ARG}") { backStackEntry ->
                 PharmacyRoute(
+                    onCreateMedicine = { navController.navigate(PharmacISTScreen.AddMedicine.name) },
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+            composable(route = PharmacISTScreen.AddMedicine.name) {
+                AddMedicineRoute(
+                    onCancel = { navController.navigate("${PharmacISTScreen.Medicine.name}/TODO") },
+                    onConfirm = { navController.navigate(PharmacISTScreen.Main.name) },
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+            composable(route = "${PharmacISTScreen.Medicine.name}/{$MEDICINE_ID_ARG}") {
+                MedicineRoute(
                     modifier = Modifier.fillMaxSize()
                 )
             }

@@ -2,12 +2,10 @@ package pt.ulisboa.tecnico.cmov.frontend.ui.pharmacy_screen
 
 import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,18 +18,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Directions
 import androidx.compose.material.icons.filled.QrCodeScanner
-import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.Card
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconToggleButton
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -55,8 +52,8 @@ import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.journeyapps.barcodescanner.CaptureActivity
-import com.journeyapps.barcodescanner.ScanOptions
 import com.journeyapps.barcodescanner.ScanContract
+import com.journeyapps.barcodescanner.ScanOptions
 import pt.ulisboa.tecnico.cmov.frontend.R
 import pt.ulisboa.tecnico.cmov.frontend.model.Medicine
 import pt.ulisboa.tecnico.cmov.frontend.model.Pharmacy
@@ -66,6 +63,7 @@ import pt.ulisboa.tecnico.cmov.frontend.ui.theme.PharmacISTTheme
 
 @Composable
 fun PharmacyRoute(
+    onCreateMedicine: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PharmacyViewModel = viewModel(factory = PharmacyViewModel.Factory)
 ) {
@@ -75,6 +73,7 @@ fun PharmacyRoute(
         pharmacy = uiState.pharmacy,
         favorite = true,
         medicines = listOf(),
+        onCreateMedicine = onCreateMedicine,
         modifier
     )
 }
@@ -84,6 +83,7 @@ fun PharmacyScreen(
     pharmacy: Pharmacy,
     favorite: Boolean,
     medicines: List<Pair<Medicine, Long>>,
+    onCreateMedicine: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
@@ -93,14 +93,13 @@ fun PharmacyScreen(
     val barLauncher = rememberLauncherForActivityResult(
         contract = ScanContract()
     ) { result ->
-        if(result.contents != null) {
+        if (result.contents != null) {
             val builder = AlertDialog.Builder(context)
             builder.setTitle("Result")
             builder.setMessage(result.contents)
-            builder.setPositiveButton("OK", DialogInterface.OnClickListener
-                { dialog, _ ->
-                    dialog.dismiss()
-                }).show()
+            builder.setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+            }.show()
         }
     }
 
@@ -157,7 +156,6 @@ fun PharmacyScreen(
                 )
             }
         }
-        val context = LocalContext.current
         ActionRow(
             actions = listOf(
                 Action(
@@ -178,16 +176,23 @@ fun PharmacyScreen(
                     onClick = {
                         val shareIntent = Intent(Intent.ACTION_SEND).apply {
                             type = "text/plain"
-                            putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.app_name)) // Optional subject
-                            putExtra(Intent.EXTRA_TEXT,
+                            putExtra(
+                                Intent.EXTRA_SUBJECT,
+                                context.getString(R.string.app_name)
+                            ) // Optional subject
+                            putExtra(
+                                Intent.EXTRA_TEXT,
                                 context.getString(
                                     R.string.share_Text,
                                     pharmacy.name,
                                     pharmacy.location
-                                )) // Content to be shared
+                                )
+                            ) // Content to be shared
                         }
-                        val chooserIntent = Intent.createChooser(shareIntent,
-                            context.getString(R.string.share_via))
+                        val chooserIntent = Intent.createChooser(
+                            shareIntent,
+                            context.getString(R.string.share_via)
+                        )
                         context.startActivity(chooserIntent)
                     }
                 )
@@ -206,28 +211,17 @@ fun PharmacyScreen(
             IconButton(onClick = { scanCode(context, barLauncher) }) {
                 Icon(Icons.Default.QrCodeScanner, contentDescription = null)
             }
+            IconButton(onClick = onCreateMedicine) {
+                Icon(Icons.Default.QrCodeScanner, contentDescription = null)
+            }
         }
         Column {
             medicines.forEach { medicine ->
-                Divider()
-                Row(
-                    modifier = Modifier
-                        .clickable { },
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(medicine.first.name)
-                    Spacer(modifier = Modifier.weight(1f))
-                    Text(
-                        text = "x" + medicine.second.toString(),
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(Icons.Default.Remove, contentDescription = null)
-                    }
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(Icons.Default.Add, contentDescription = null)
-                    }
-                }
+                HorizontalDivider()
+                ListItem(
+                    headlineContent = { Text(medicine.first.name) },
+                    trailingContent = { Text(text = medicine.second.toString()) }
+                )
             }
         }
     }
@@ -298,6 +292,7 @@ fun PharmacyScreenPreview() {
             ),
             true,
             medicines = medicines,
+            onCreateMedicine = {},
             modifier = Modifier
                 .fillMaxSize()
         )
