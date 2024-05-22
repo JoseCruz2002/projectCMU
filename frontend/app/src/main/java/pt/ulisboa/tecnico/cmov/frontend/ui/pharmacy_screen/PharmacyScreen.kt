@@ -1,7 +1,12 @@
 package pt.ulisboa.tecnico.cmov.frontend.ui.pharmacy_screen
 
+import android.app.AlertDialog
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultLauncher
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -48,6 +53,9 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
+import com.journeyapps.barcodescanner.CaptureActivity
+import com.journeyapps.barcodescanner.ScanOptions
+import com.journeyapps.barcodescanner.ScanContract
 import pt.ulisboa.tecnico.cmov.frontend.R
 import pt.ulisboa.tecnico.cmov.frontend.model.Medicine
 import pt.ulisboa.tecnico.cmov.frontend.model.Pharmacy
@@ -79,8 +87,25 @@ fun PharmacyScreen(
 ) {
     val scrollState = rememberScrollState()
 
+    val context = LocalContext.current
+
+    val barLauncher = rememberLauncherForActivityResult(
+        contract = ScanContract()
+    ) { result ->
+        if(result.contents != null) {
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Result")
+            builder.setMessage(result.contents)
+            builder.setPositiveButton("OK", DialogInterface.OnClickListener
+                { dialog, _ ->
+                    dialog.dismiss()
+                }).show()
+        }
+    }
+
     Column(
-        modifier = modifier.verticalScroll(scrollState)
+        modifier = modifier
+            .verticalScroll(scrollState)
             .padding(dimensionResource(R.dimen.padding_medium)),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
     ) {
@@ -158,7 +183,7 @@ fun PharmacyScreen(
                 style = MaterialTheme.typography.titleMedium
             )
             Spacer(modifier = Modifier.weight(1f))
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = { scanCode(context, barLauncher) }) {
                 Icon(Icons.Default.QrCodeScanner, contentDescription = null)
             }
         }
@@ -186,6 +211,19 @@ fun PharmacyScreen(
             }
         }
     }
+}
+
+fun scanCode(
+    context: Context,
+    launcher: ActivityResultLauncher<ScanOptions>
+) {
+    val options = ScanOptions().apply {
+        setPrompt(context.getString(R.string.scan_bar_code))
+        setBeepEnabled(true)
+        setOrientationLocked(true)
+        captureActivity = CaptureActivity::class.java
+    }
+    launcher.launch(options)
 }
 
 @Composable
