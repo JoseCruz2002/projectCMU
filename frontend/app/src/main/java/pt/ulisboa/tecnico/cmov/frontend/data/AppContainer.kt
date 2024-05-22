@@ -1,8 +1,8 @@
 package pt.ulisboa.tecnico.cmov.frontend.data
 
 import com.google.firebase.Firebase
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.database
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.storage
 
@@ -11,11 +11,10 @@ interface AppContainer {
 }
 
 class DefaultAppContainer : AppContainer {
-    private var database: FirebaseDatabase = Firebase.database.apply {
-        setPersistenceEnabled(true)
-    }
+    private val database: FirebaseFirestore = Firebase.firestore
 
-    private var storage: FirebaseStorage = Firebase.storage
+    private val storage: FirebaseStorage = Firebase.storage
 
-    override val pharmacyRepository: PharmacyRepository = FirebasePharmacyRepository(database, storage)
+    override val pharmacyRepository: PharmacyRepository =
+        FirebasePharmacyRepository(database, storage)
 }

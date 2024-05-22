@@ -1,9 +1,7 @@
 package pt.ulisboa.tecnico.cmov.frontend.data
 
 import android.net.Uri
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.getValue
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
 import pt.ulisboa.tecnico.cmov.frontend.model.Pharmacy
@@ -18,45 +16,45 @@ interface PharmacyRepository {
 }
 
 class FirebasePharmacyRepository(
-    private val database: FirebaseDatabase,
-    private val storage: FirebaseStorage
+    database: FirebaseFirestore,
+    storage: FirebaseStorage
 ) : PharmacyRepository {
-    private val databaseRef: DatabaseReference by lazy {
-        database.getReference(PHARMACY_REFERENCE_PATH)
-    }
+    private val databaseRef = database.collection(PHARMACY_REFERENCE_PATH)
     private val storageRef = storage.getReference(IMAGES_REFERENCE_PATH)
 
     override suspend fun getPharmacies(): List<Pharmacy> {
         return try {
-            val snapshot = databaseRef.get().await()
-            snapshot.getValue<Map<String, Pharmacy>>()?.map {
-                it.value.id = it.key
-                it.value
-            } ?: emptyList()
+            databaseRef
+                .get()
+                .await()
+                .documents
+                .map {
+                    it.toObject(Pharmacy::class.java)?.apply {
+                        this.id = it.id
+                    }!!
+                }
         } catch (e: Exception) {
-            // Handle exception
             emptyList()
         }
     }
 
     override suspend fun getPharmacy(id: String): Pharmacy {
-        return databaseRef
-            .child(id)
-            .get()
-            .await()
-            .getValue<Pharmacy>()
-            ?.apply { this.id = id }
-            ?: Pharmacy()
+        return try {
+            databaseRef.document(id).get().await().toObject(Pharmacy::class.java)?.apply {
+                this.id = id
+            }!!
+        } catch (e: Exception) {
+            Pharmacy()
+        }
     }
 
     override suspend fun addPharmacy(pharmacy: Pharmacy, uri: Uri) {
         try {
             val photoRef = storageRef.child(uri.lastPathSegment!!)
-
-            photoRef.putFile(uri).continueWithTask{
+            photoRef.putFile(uri).continueWithTask {
                 photoRef.downloadUrl
-            }.addOnCompleteListener{ task ->
-                databaseRef.push().setValue(pharmacy.copy(img = task.result.toString()))
+            }.addOnCompleteListener { task ->
+                databaseRef.add(pharmacy.copy(img = task.result.toString()))
             }
         } catch (e: Exception) {
             // Handle exception
