@@ -1,8 +1,14 @@
 package pt.ulisboa.tecnico.cmov.frontend.model
 
+import com.google.firebase.firestore.Exclude
+import com.google.firebase.firestore.IgnoreExtraProperties
+
+@IgnoreExtraProperties
 data class Medicine(
-    val name: String = "",
-    val description: String = "",
-    val img: String = "",
-    val pharmacies: List<Pharmacy> = emptyList()
+    @get:Exclude
+    var id: String = "",
+    var name: String = "",
+    var description: String = "",
+    var img: String = "",
+    var pharmacies: List<Pharmacy> = emptyList()
 )

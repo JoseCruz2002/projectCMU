@@ -117,16 +117,18 @@ fun PharmacISTApp(
                     modifier = Modifier.fillMaxSize()
                 )
             }
-            composable(route = "${PharmacISTScreen.Pharmacy.name}/{$PHARMACY_ID_ARG}") { backStackEntry ->
+            composable(route = "${PharmacISTScreen.Pharmacy.name}/{$PHARMACY_ID_ARG}") {
                 PharmacyRoute(
-                    onCreateMedicine = { navController.navigate(PharmacISTScreen.AddMedicine.name) },
+                    onCreateMedicine = { pharmacyId, medicineId ->
+                        navController.navigate("${PharmacISTScreen.AddMedicine.name}/${pharmacyId}/${medicineId}")
+                    },
                     modifier = Modifier.fillMaxSize()
                 )
             }
-            composable(route = PharmacISTScreen.AddMedicine.name) {
+            composable(route = "${PharmacISTScreen.AddMedicine.name}/{$PHARMACY_ID_ARG}/{$MEDICINE_ID_ARG}") { backStackEntry ->
                 AddMedicineRoute(
-                    onCancel = { navController.navigate("${PharmacISTScreen.Medicine.name}/TODO") },
-                    onConfirm = { navController.navigate(PharmacISTScreen.Main.name) },
+                    onCancel = { navController.popBackStack() },
+                    onConfirm = { navController.popBackStack() },
                     modifier = Modifier.fillMaxSize()
                 )
             }

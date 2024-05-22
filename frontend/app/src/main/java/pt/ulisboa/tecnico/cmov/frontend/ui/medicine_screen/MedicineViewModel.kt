@@ -29,7 +29,7 @@ class MedicineViewModel(
 
     private fun getMedicine(medicineId: String) {
         viewModelScope.launch {
-
+            //TODO
         }
     }
 

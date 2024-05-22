@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.cmov.frontend.ui.pharmacy_screen
 
-import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -63,18 +62,30 @@ import pt.ulisboa.tecnico.cmov.frontend.ui.theme.PharmacISTTheme
 
 @Composable
 fun PharmacyRoute(
-    onCreateMedicine: () -> Unit,
+    onCreateMedicine: (String, String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PharmacyViewModel = viewModel(factory = PharmacyViewModel.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    val context = LocalContext.current
+
+    val barLauncher = rememberLauncherForActivityResult(
+        contract = ScanContract()
+    ) { result ->
+        if (result.contents != null) {
+            onCreateMedicine(uiState.pharmacy.id, result.contents)
+        }
+    }
+
     PharmacyScreen(
         pharmacy = uiState.pharmacy,
         favorite = true,
         medicines = listOf(),
-        onCreateMedicine = onCreateMedicine,
-        modifier
+        onScan = { scanCode(context, barLauncher) },
+        onGetDirections = { getDirections(context, uiState.pharmacy) },
+        onShare = { share(context, uiState.pharmacy) },
+        modifier = modifier
     )
 }
 
@@ -83,29 +94,14 @@ fun PharmacyScreen(
     pharmacy: Pharmacy,
     favorite: Boolean,
     medicines: List<Pair<Medicine, Long>>,
-    onCreateMedicine: () -> Unit,
+    onScan: () -> Unit,
+    onGetDirections: () -> Unit,
+    onShare: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val scrollState = rememberScrollState()
-
-    val context = LocalContext.current
-
-    val barLauncher = rememberLauncherForActivityResult(
-        contract = ScanContract()
-    ) { result ->
-        if (result.contents != null) {
-            val builder = AlertDialog.Builder(context)
-            builder.setTitle("Result")
-            builder.setMessage(result.contents)
-            builder.setPositiveButton("OK") { dialog, _ ->
-                dialog.dismiss()
-            }.show()
-        }
-    }
-
     Column(
         modifier = modifier
-            .verticalScroll(scrollState)
+            .verticalScroll(rememberScrollState())
             .padding(dimensionResource(R.dimen.padding_medium)),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
     ) {
@@ -161,40 +157,12 @@ fun PharmacyScreen(
                 Action(
                     icon = Icons.Default.Directions,
                     label = stringResource(R.string.directions),
-                    onClick = {
-                        val mapIntent = Intent(
-                            Intent.ACTION_VIEW,
-                            Uri.parse("google.navigation:q=${pharmacy.latitude},${pharmacy.longitude}")
-                        )
-                        mapIntent.setPackage("com.google.android.apps.maps")
-                        context.startActivity(mapIntent)
-                    }
+                    onClick = onGetDirections
                 ),
                 Action(
                     icon = Icons.Default.Share,
                     label = stringResource(R.string.share),
-                    onClick = {
-                        val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                            type = "text/plain"
-                            putExtra(
-                                Intent.EXTRA_SUBJECT,
-                                context.getString(R.string.app_name)
-                            ) // Optional subject
-                            putExtra(
-                                Intent.EXTRA_TEXT,
-                                context.getString(
-                                    R.string.share_Text,
-                                    pharmacy.name,
-                                    pharmacy.location
-                                )
-                            ) // Content to be shared
-                        }
-                        val chooserIntent = Intent.createChooser(
-                            shareIntent,
-                            context.getString(R.string.share_via)
-                        )
-                        context.startActivity(chooserIntent)
-                    }
+                    onClick = onShare
                 )
             ),
             modifier = Modifier.fillMaxWidth()
@@ -208,10 +176,7 @@ fun PharmacyScreen(
                 style = MaterialTheme.typography.titleMedium
             )
             Spacer(modifier = Modifier.weight(1f))
-            IconButton(onClick = { scanCode(context, barLauncher) }) {
-                Icon(Icons.Default.QrCodeScanner, contentDescription = null)
-            }
-            IconButton(onClick = onCreateMedicine) {
+            IconButton(onClick = onScan) {
                 Icon(Icons.Default.QrCodeScanner, contentDescription = null)
             }
         }
@@ -238,6 +203,38 @@ fun scanCode(
         captureActivity = CaptureActivity::class.java
     }
     launcher.launch(options)
+}
+
+fun getDirections(context: Context, pharmacy: Pharmacy) {
+    val mapIntent = Intent(
+        Intent.ACTION_VIEW,
+        Uri.parse("google.navigation:q=${pharmacy.latitude},${pharmacy.longitude}")
+    )
+    mapIntent.setPackage("com.google.android.apps.maps")
+    context.startActivity(mapIntent)
+}
+
+fun share(context: Context, pharmacy: Pharmacy) {
+    val shareIntent = Intent(Intent.ACTION_SEND).apply {
+        type = "text/plain"
+        putExtra(
+            Intent.EXTRA_SUBJECT,
+            context.getString(R.string.app_name)
+        ) // Optional subject
+        putExtra(
+            Intent.EXTRA_TEXT,
+            context.getString(
+                R.string.share_Text,
+                pharmacy.name,
+                pharmacy.location
+            )
+        ) // Content to be shared
+    }
+    val chooserIntent = Intent.createChooser(
+        shareIntent,
+        context.getString(R.string.share_via)
+    )
+    context.startActivity(chooserIntent)
 }
 
 @Composable
@@ -274,9 +271,9 @@ private fun Map(pharmacy: Pharmacy, modifier: Modifier = Modifier) {
 @Composable
 fun PharmacyScreenPreview() {
     val medicines = listOf(
-        Pair(Medicine("benuron", "", "", emptyList()), 65L),
-        Pair(Medicine("benurin", "", "", emptyList()), 4L),
-        Pair(Medicine("benurum", "", "", emptyList()), 13L),
+        Pair(Medicine("", "benuron", "", "", emptyList()), 65L),
+        Pair(Medicine("", "benurin", "", "", emptyList()), 4L),
+        Pair(Medicine("", "benurum", "", "", emptyList()), 13L),
     )
 
     PharmacISTTheme {
@@ -292,7 +289,9 @@ fun PharmacyScreenPreview() {
             ),
             true,
             medicines = medicines,
-            onCreateMedicine = {},
+            onGetDirections = {},
+            onScan = {},
+            onShare = {},
             modifier = Modifier
                 .fillMaxSize()
         )

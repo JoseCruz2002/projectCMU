@@ -26,29 +26,33 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import pt.ulisboa.tecnico.cmov.frontend.R
 import pt.ulisboa.tecnico.cmov.frontend.ui.theme.PharmacISTTheme
-import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun AddMedicineRoute(
     onConfirm: () -> Unit,
     onCancel: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: AddMedicineViewModel = viewModel()
+    viewModel: AddMedicineViewModel = viewModel(factory = AddMedicineViewModel.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     AddMedicineScreen(
+        id = viewModel.medicineId,
         name = uiState.name,
         description = uiState.description,
         quantity = uiState.quantity,
         onNameChange = { viewModel.updateName(it) },
         onDescriptionChange = { viewModel.updateDescription(it) },
         onQuantityChange = { viewModel.updateQuantity(it) },
-        onIncrement = {viewModel.incrementQuantity()},
-        onDecrement = {viewModel.decrementQuantity()},
-        onConfirm = onConfirm,
+        onIncrement = { viewModel.incrementQuantity() },
+        onDecrement = { viewModel.decrementQuantity() },
+        onConfirm = {
+            viewModel.addMedicine()
+            onConfirm()
+        },
         onCancel = onCancel,
         modifier = modifier
     )
@@ -56,6 +60,7 @@ fun AddMedicineRoute(
 
 @Composable
 fun AddMedicineScreen(
+    id: String,
     name: String,
     description: String,
     quantity: Int,
@@ -77,10 +82,16 @@ fun AddMedicineScreen(
                 .padding(dimensionResource(R.dimen.padding_medium)),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
         ) {
-            Text(
-                text = stringResource(R.string.add_medicine_title),
-                style = MaterialTheme.typography.headlineMedium
-            )
+            Column {
+                Text(
+                    text = stringResource(R.string.add_medicine_title),
+                    style = MaterialTheme.typography.headlineMedium
+                )
+                Text(
+                    text = stringResource(R.string.medicine_id, id),
+                    style = MaterialTheme.typography.labelSmall
+                )
+            }
             OutlinedTextField(
                 value = name,
                 onValueChange = onNameChange,
@@ -152,6 +163,7 @@ fun AddMedicineScreen(
 fun AddMedicineScreenPreview() {
     PharmacISTTheme {
         AddMedicineScreen(
+            id = "ZXR400",
             name = "",
             description = "",
             quantity = 0,

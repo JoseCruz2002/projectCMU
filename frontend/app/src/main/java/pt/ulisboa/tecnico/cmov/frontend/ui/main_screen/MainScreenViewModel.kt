@@ -15,8 +15,6 @@ import kotlinx.coroutines.launch
 import pt.ulisboa.tecnico.cmov.frontend.PharmacISTApplication
 import pt.ulisboa.tecnico.cmov.frontend.data.PharmacyRepository
 
-private const val TAG: String = "MainScreenViewModel"
-
 class MainScreenViewModel(private val pharmacyRepository: PharmacyRepository) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MainScreenUIState(listOf()))

@@ -24,4 +24,5 @@
     <string name="share">Share</string>
     <string name="share_Text">Pharmacy: %1$s \nAddress: %2$s</string>
     <string name="share_via">Share with</string>
+    <string name="medicine_id" translatable="false">ID: %1$s</string>
 </resources>

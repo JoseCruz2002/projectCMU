@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">PharmacIST</string>
     <string name="username">Nome de Utilizador</string>
-    <string name="login">Conectar</string>
+    <string name="login">Entrar</string>
     <string name="nav_main">Mapa</string>
-    <string name="nav_search_medicine">Procurar Medicamento</string>
-    <string name="nav_add_pharmacy">Adicionar Farmácia</string>
+    <string name="nav_search_medicine">Medicamentos</string>
+    <string name="nav_add_pharmacy">Criar Farmácia</string>
     <string name="add_pharmacy_title">Adicionar Farmácia</string>
     <string name="pharmacy_name">Nome</string>
     <string name="pharmacy_address">Morada</string>
