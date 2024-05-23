@@ -2,9 +2,8 @@ package pt.ulisboa.tecnico.cmov.frontend.ui.login_screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -19,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import pt.ulisboa.tecnico.cmov.frontend.R
 import pt.ulisboa.tecnico.cmov.frontend.ui.theme.PharmacISTTheme
@@ -47,32 +45,38 @@ fun LoginScreen(
     onLoginClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val scrollState = rememberScrollState()
-
     Column(
-        modifier = modifier.verticalScroll(scrollState),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        modifier = modifier
+            .verticalScroll(rememberScrollState())
+            .displayCutoutPadding(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            stringResource(R.string.app_name),
-            modifier = Modifier.height(200.dp),
-            style = MaterialTheme.typography.displayLarge
-        )
-        OutlinedTextField(
-            value = username,
-            onValueChange = onUsernameChange,
-            modifier = Modifier
-                .padding(dimensionResource(R.dimen.padding_medium)),
-            label = { Text(stringResource(R.string.username)) },
-            singleLine = true,
-        )
-        Button(
-            onClick = onLoginClicked,
-            modifier = Modifier
-                .padding(dimensionResource(R.dimen.padding_medium)),
+        Column(
+            modifier = Modifier.weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Text(stringResource(R.string.login))
+            Text(
+                stringResource(R.string.app_name),
+                style = MaterialTheme.typography.displayLarge
+            )
+        }
+        Column(
+            modifier = Modifier.weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
+        ) {
+            OutlinedTextField(
+                value = username,
+                onValueChange = onUsernameChange,
+                label = { Text(stringResource(R.string.username)) },
+                singleLine = true,
+            )
+            Button(
+                onClick = onLoginClicked,
+            ) {
+                Text(stringResource(R.string.login))
+            }
         }
     }
 }

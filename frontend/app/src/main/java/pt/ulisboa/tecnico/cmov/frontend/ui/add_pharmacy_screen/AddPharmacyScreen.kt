@@ -11,6 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -73,9 +74,10 @@ fun AddPharmacyRoute(
     val apiKey: String
     val coroutineScope = rememberCoroutineScope()
 
-    context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA).apply {
-        apiKey = metaData.getString("com.google.android.geo.API_KEY").toString()
-    }
+    context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
+        .apply {
+            apiKey = metaData.getString("com.google.android.geo.API_KEY").toString()
+        }
 
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture()
@@ -132,10 +134,10 @@ fun AddPharmacyScreen(
     onConfirm: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val scrollState = rememberScrollState()
-
     Column(
-        modifier = modifier.verticalScroll(scrollState),
+        modifier = modifier
+            .verticalScroll(rememberScrollState())
+            .displayCutoutPadding(),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(
