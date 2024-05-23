@@ -8,6 +8,7 @@ const val MEDICINES_REFERENCE_PATH = "medicines"
 
 interface MedicineRepository {
     suspend fun getMedicines(): List<Medicine>
+    suspend fun getMedicine(id: String): Medicine
     suspend fun addMedicine(medicine: Medicine)
 }
 
@@ -29,6 +30,16 @@ class FirebaseMedicineRepository(
                 }
         } catch (e: Exception) {
             emptyList()
+        }
+    }
+
+    override suspend fun getMedicine(id: String): Medicine {
+        return try {
+            databaseRef.document(id).get().await().toObject(Medicine::class.java)?.apply {
+                this.id = id
+            }!!
+        } catch (e: Exception) {
+            Medicine()
         }
     }
 

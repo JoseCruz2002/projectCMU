@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.cmov.frontend
 
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -91,10 +92,13 @@ fun PharmacISTApp(
             startDestination = PharmacISTScreen.Login.name,
             modifier = Modifier.padding(innerPadding)
         ) {
+            val modifier = Modifier
+                .fillMaxSize()
+                .consumeWindowInsets(innerPadding)
             composable(route = PharmacISTScreen.Login.name) {
                 LoginRoute(
                     onLoginClicked = { navController.navigate(PharmacISTScreen.Main.name) },
-                    modifier = Modifier.fillMaxSize()
+                    modifier = modifier
                 )
             }
             composable(route = PharmacISTScreen.Main.name) {
@@ -102,19 +106,22 @@ fun PharmacISTApp(
                     onPharmacyClick = { pharmacyId ->
                         navController.navigate("${PharmacISTScreen.Pharmacy.name}/$pharmacyId")
                     },
-                    modifier = Modifier.fillMaxSize()
+                    modifier = modifier
                 )
             }
             composable(route = PharmacISTScreen.SearchMedicine.name) {
                 SearchMedicineRoute(
-                    modifier = Modifier.fillMaxSize()
+                    onSelectMedicine = { medicineId ->
+                        navController.navigate("${PharmacISTScreen.Medicine.name}/$medicineId")
+                    },
+                    modifier = modifier
                 )
             }
             composable(route = PharmacISTScreen.AddPharmacy.name) {
                 AddPharmacyRoute(
                     onCancel = { navController.navigate(PharmacISTScreen.Main.name) },
                     onConfirm = { navController.navigate(PharmacISTScreen.Main.name) },
-                    modifier = Modifier.fillMaxSize()
+                    modifier = modifier
                 )
             }
             composable(route = "${PharmacISTScreen.Pharmacy.name}/{$PHARMACY_ID_ARG}") {
@@ -122,19 +129,19 @@ fun PharmacISTApp(
                     onCreateMedicine = { pharmacyId, medicineId ->
                         navController.navigate("${PharmacISTScreen.AddMedicine.name}/${pharmacyId}/${medicineId}")
                     },
-                    modifier = Modifier.fillMaxSize()
+                    modifier = modifier
                 )
             }
             composable(route = "${PharmacISTScreen.AddMedicine.name}/{$PHARMACY_ID_ARG}/{$MEDICINE_ID_ARG}") { backStackEntry ->
                 AddMedicineRoute(
                     onCancel = { navController.popBackStack() },
                     onConfirm = { navController.popBackStack() },
-                    modifier = Modifier.fillMaxSize()
+                    modifier = modifier
                 )
             }
             composable(route = "${PharmacISTScreen.Medicine.name}/{$MEDICINE_ID_ARG}") {
                 MedicineRoute(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = modifier
                 )
             }
         }

@@ -1,72 +1,102 @@
 package pt.ulisboa.tecnico.cmov.frontend.ui.search_medicine_screen
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SearchBar
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import pt.ulisboa.tecnico.cmov.frontend.R
-import pt.ulisboa.tecnico.cmov.frontend.ui.theme.PharmacISTTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
+import pt.ulisboa.tecnico.cmov.frontend.model.Medicine
+import pt.ulisboa.tecnico.cmov.frontend.ui.theme.PharmacISTTheme
 
 @Composable
 fun SearchMedicineRoute(
+    onSelectMedicine: (String) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: SearchMedicineViewModel = viewModel()
+    viewModel: SearchMedicineViewModel = viewModel(factory = SearchMedicineViewModel.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     SearchMedicineScreen(
         query = uiState.query,
-        results = listOf(),
+        results = uiState.results,
         onQueryChange = { viewModel.updateQuery(it) },
-        onSearch = {},
-        modifier = modifier
+        onSearch = { viewModel.searchMedicine() },
+        onSelectMedicine = onSelectMedicine,
+        modifier = modifier,
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchMedicineScreen(
     query: String,
-    results: List<String>,
+    results: List<Medicine>?,
     onQueryChange: (String) -> Unit,
-    onSearch: (String) -> Unit,
-    modifier: Modifier = Modifier
+    onSearch: () -> Unit,
+    onSelectMedicine: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier) {
-        SearchBar(
-            query = query,
-            onQueryChange = onQueryChange,
-            onSearch = onSearch,
-            active = true,
-            onActiveChange = {},
-            leadingIcon = { Icon(imageVector = Icons.Outlined.Search, contentDescription = null) }
-        ) {
-            results.forEach { result ->
-                Row(
+    Column(modifier = modifier.displayCutoutPadding()) {
+        TextField(
+            value = query,
+            onValueChange = onQueryChange,
+            modifier = Modifier.fillMaxWidth(),
+            placeholder = { Text(text = "Search Medicine") },
+            leadingIcon = { Icon(imageVector = Icons.Outlined.Search, contentDescription = null) },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+            keyboardActions = KeyboardActions(onSearch = { onSearch() }),
+            singleLine = true
+        )
+        when {
+            results == null -> {
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxSize()
+                        .imePadding(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    Text(
-                        result,
-                        modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
-                    )
+                    Text(text = "Search results will appear here!")
                 }
-                Divider()
+            }
+
+            results.isEmpty() -> {
+                Text(
+                    text = "No results were found",
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .wrapContentHeight(Alignment.CenterVertically)
+                        .imePadding(),
+                    textAlign = TextAlign.Center
+                )
+            }
+
+            else -> {
+                results.forEach { result ->
+                    ListItem(headlineContent = { Text(text = result.name) },
+                        modifier = Modifier.clickable { onSelectMedicine(result.id) })
+                    HorizontalDivider()
+                }
             }
         }
     }
@@ -80,7 +110,8 @@ fun SearchMedicineScreenPreview() {
             query = "",
             onQueryChange = {},
             onSearch = {},
-            results = listOf("result1", "other result"),
+            onSelectMedicine = {},
+            results = null,
             modifier = Modifier
                 .fillMaxSize()
         )
