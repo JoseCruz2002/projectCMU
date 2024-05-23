@@ -7,19 +7,17 @@ import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
-import pt.ulisboa.tecnico.cmov.frontend.ui.main_screen.MainScreenViewModel
 
 data class PlaceResponse(val candidates: List<PlaceResult>, val status: String)
 data class PlaceResult(val location: Location)
 
 
 suspend fun getLatLngFromPlace(
-    viewModel: MainScreenViewModel,
     query:String,
     apiKey: String
-) {
+): LatLng? {
     val client = OkHttpClient()
-    val url = "https://maps.googleapis.com/maps/api/geocode/json?address=${query}&key=${apiKey}"
+    val url = "https://maps.googleapis.com/maps/api/geocode/json?address=${query.lowercase()}&key=${apiKey}"
     val request = Request.Builder().url(url).build()
 
     return withContext(Dispatchers.IO) {
@@ -33,9 +31,10 @@ suspend fun getLatLngFromPlace(
                     .getJSONObject("location")
                 val lat = location.getDouble("lat")
                 val lng = location.getDouble("lng")
-                viewModel.updateJustSearchedLocation(true)
-                viewModel.updateLocation(getLocationFromLatLng(LatLng(lat, lng)))
+                LatLng(lat, lng)
             }
+        } else {
+            null
         }
     }
 }

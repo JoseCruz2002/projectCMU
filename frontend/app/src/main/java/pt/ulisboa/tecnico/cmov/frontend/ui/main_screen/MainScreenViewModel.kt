@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,6 +15,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import pt.ulisboa.tecnico.cmov.frontend.PharmacISTApplication
 import pt.ulisboa.tecnico.cmov.frontend.data.PharmacyRepository
+import pt.ulisboa.tecnico.cmov.frontend.ui.components.getLatLngFromPlace
+import pt.ulisboa.tecnico.cmov.frontend.ui.components.getLocationFromLatLng
 
 class MainScreenViewModel(private val pharmacyRepository: PharmacyRepository) : ViewModel() {
 
@@ -90,6 +93,12 @@ class MainScreenViewModel(private val pharmacyRepository: PharmacyRepository) : 
                 justSearchedLocation = newJustSearchedLocation
             )
         }
+    }
+
+    suspend fun searchLocation(query: String, apikey: String) {
+        val latLng: LatLng? = getLatLngFromPlace(query, apikey)
+        updateJustSearchedLocation(true)
+        updateLocation(getLocationFromLatLng(LatLng(latLng!!.latitude, latLng.longitude)))
     }
 
 }
