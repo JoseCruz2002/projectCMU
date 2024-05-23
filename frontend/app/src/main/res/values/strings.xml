@@ -25,4 +25,7 @@
     <string name="share_Text">Pharmacy: %1$s \nAddress: %2$s</string>
     <string name="share_via">Share with</string>
     <string name="medicine_id" translatable="false">ID: %1$s</string>
+    <string name="medicine_search_no_results">No results were found</string>
+    <string name="medicine_search_no_search">Search results will appear here!</string>
+    <string name="medicine_search_hint">Search Medicine</string>
 </resources>

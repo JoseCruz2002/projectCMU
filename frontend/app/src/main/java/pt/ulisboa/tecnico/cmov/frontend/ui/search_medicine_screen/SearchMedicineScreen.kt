@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -22,10 +21,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import pt.ulisboa.tecnico.cmov.frontend.R
 import pt.ulisboa.tecnico.cmov.frontend.model.Medicine
 import pt.ulisboa.tecnico.cmov.frontend.ui.theme.PharmacISTTheme
 
@@ -61,7 +61,7 @@ fun SearchMedicineScreen(
             value = query,
             onValueChange = onQueryChange,
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text(text = "Search Medicine") },
+            placeholder = { Text(stringResource(R.string.medicine_search_hint)) },
             leadingIcon = { Icon(imageVector = Icons.Outlined.Search, contentDescription = null) },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(onSearch = { onSearch() }),
@@ -76,19 +76,20 @@ fun SearchMedicineScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Text(text = "Search results will appear here!")
+                    Text(stringResource(R.string.medicine_search_no_search))
                 }
             }
 
             results.isEmpty() -> {
-                Text(
-                    text = "No results were found",
+                Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .wrapContentHeight(Alignment.CenterVertically)
                         .imePadding(),
-                    textAlign = TextAlign.Center
-                )
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(stringResource(R.string.medicine_search_no_results))
+                }
             }
 
             else -> {
@@ -111,7 +112,7 @@ fun SearchMedicineScreenPreview() {
             onQueryChange = {},
             onSearch = {},
             onSelectMedicine = {},
-            results = null,
+            results = emptyList(),
             modifier = Modifier
                 .fillMaxSize()
         )
