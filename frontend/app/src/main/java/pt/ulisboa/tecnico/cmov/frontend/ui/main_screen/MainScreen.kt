@@ -27,7 +27,6 @@ import kotlinx.coroutines.launch
 import pt.ulisboa.tecnico.cmov.frontend.R
 import pt.ulisboa.tecnico.cmov.frontend.model.Pharmacy
 import pt.ulisboa.tecnico.cmov.frontend.ui.components.CreateMap
-import pt.ulisboa.tecnico.cmov.frontend.ui.components.getLatLngFromPlace
 
 @Composable
 fun MainScreenRoute(
@@ -54,7 +53,7 @@ fun MainScreenRoute(
         onActiveChange = { viewModel.updateActive(it) },
         onSearch = { query ->
             coroutineScope.launch {
-                getLatLngFromPlace(viewModel, uiState.query, apiKey)
+                viewModel.searchLocation(uiState.query, apiKey)
             }
         },
         active = uiState.active,

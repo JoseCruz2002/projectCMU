@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.cmov.frontend.ui.add_pharmacy_screen
 import android.Manifest.permission.CAMERA
 import android.content.Context
 import android.content.pm.PackageManager
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
@@ -29,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -68,6 +70,13 @@ fun AddPharmacyRoute(
         tmpFile
     )
 
+    val apiKey: String
+    val coroutineScope = rememberCoroutineScope()
+
+    context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA).apply {
+        apiKey = metaData.getString("com.google.android.geo.API_KEY").toString()
+    }
+
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture()
     ) { success ->
@@ -105,7 +114,8 @@ fun AddPharmacyRoute(
         onCancel = { onCancel() },
         onConfirm = {
             onConfirm()
-            viewModel.addPharmacy()
+            Log.d("addPharmacy", "pharmacy is to be added")
+            viewModel.addPharmacy(apiKey, coroutineScope)
         },
         modifier = modifier
     )
