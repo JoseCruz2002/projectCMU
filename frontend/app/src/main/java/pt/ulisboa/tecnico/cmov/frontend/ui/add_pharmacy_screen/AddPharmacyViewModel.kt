@@ -19,7 +19,10 @@ import kotlinx.coroutines.launch
 import pt.ulisboa.tecnico.cmov.frontend.PharmacISTApplication
 import pt.ulisboa.tecnico.cmov.frontend.data.PharmacyRepository
 import pt.ulisboa.tecnico.cmov.frontend.model.Pharmacy
+import pt.ulisboa.tecnico.cmov.frontend.ui.components.getAddressFromCoordinates
 import pt.ulisboa.tecnico.cmov.frontend.ui.components.getLatLngFromPlace
+
+const val TAG: String = "addPharmacy"
 
 class AddPharmacyViewModel(private val pharmacyRepository: PharmacyRepository) : ViewModel() {
 
@@ -50,12 +53,48 @@ class AddPharmacyViewModel(private val pharmacyRepository: PharmacyRepository) :
         }
     }
 
+    fun updateCurrentLocation(newLocation: LatLng) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                currentLocation = newLocation
+            )
+        }
+    }
+
+    fun updateChosenLocation(newChosenLocation: LatLng) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                chosenLocation = newChosenLocation
+            )
+        }
+    }
+
+    fun updateUserChoseLocation(newUserChoseLocation: Boolean) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                userChoseLocation = newUserChoseLocation
+            )
+        }
+    }
+
     fun addPharmacy(apiKey: String, coroutineScope: CoroutineScope) {
         viewModelScope.launch {
-            val latLng: LatLng? = coroutineScope.async {
-                getLatLngFromPlace(_uiState.value.address, apiKey)
-            }.await()
-            Log.d("addPharmacy", "coordinates: $latLng")
+
+            val latLng: LatLng?
+            if (_uiState.value.userChoseLocation) {
+                latLng = _uiState.value.chosenLocation
+                coroutineScope.async {
+                    getAddressFromCoordinates(latLng.latitude, latLng.longitude, apiKey)
+                }.await()?.let {
+                    updateAddress(it)
+                }
+            } else {
+                latLng = coroutineScope.async {
+                    getLatLngFromPlace(_uiState.value.address, apiKey)
+                }.await()
+            }
+            Log.d(TAG, "coordinates: $latLng and address: ${_uiState.value.address}")
+
             pharmacyRepository.addPharmacy(
                 Pharmacy(
                     name = _uiState.value.name,
@@ -67,7 +106,7 @@ class AddPharmacyViewModel(private val pharmacyRepository: PharmacyRepository) :
                 ),
                 uri = _uiState.value.imageUri
             )
-            Log.d("addPharmacy", "pharmacy ${_uiState.value.name} added with coordinates: $latLng")
+            Log.d(TAG, "pharmacy ${_uiState.value.name} added with coordinates: $latLng")
         }
     }
 
@@ -80,4 +119,24 @@ class AddPharmacyViewModel(private val pharmacyRepository: PharmacyRepository) :
             }
         }
     }
+
+    /*fun getMyLocation(context: Context) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) ==
+            PackageManager.PERMISSION_GRANTED) {
+            val locationSource = MyLocationSource(context= context)
+            locationSource.activate { location ->
+                val latLng = LatLng(location.latitude, location.longitude)
+                Log.d(TAG, "Location update: $latLng")
+                updateCurrentLocation(latLng)
+            }
+            locationSource.deactivate()
+        } else {
+            Toast.makeText(
+                context,
+                context.getString(R.string.location_permissions_not_given),
+                Toast.LENGTH_SHORT
+            ).show()
+            updateCurrentLocation(LatLng(39.636995, -9.138543))
+        }
+    }*/
 }

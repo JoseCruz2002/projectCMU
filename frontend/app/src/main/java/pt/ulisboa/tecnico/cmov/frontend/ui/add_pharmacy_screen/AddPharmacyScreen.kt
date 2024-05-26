@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -40,7 +41,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.CameraPositionState
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.MapUiSettings
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
 import pt.ulisboa.tecnico.cmov.frontend.R
 import pt.ulisboa.tecnico.cmov.frontend.ui.theme.PharmacISTTheme
 import java.io.File
@@ -52,8 +60,9 @@ import java.util.Locale
 fun AddPharmacyRoute(
     onCancel: () -> Unit,
     onConfirm: () -> Unit,
+    onMapClick: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: AddPharmacyViewModel = viewModel(factory = AddPharmacyViewModel.Factory)
+    viewModel: AddPharmacyViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -119,6 +128,11 @@ fun AddPharmacyRoute(
             Log.d("addPharmacy", "pharmacy is to be added")
             viewModel.addPharmacy(apiKey, coroutineScope)
         },
+        inTheBoxFunction = { Map(onMapClick, viewModel, modifier) },
+        onMapClick = {
+            Log.d("addPharmacy", "map clicked on")
+            onMapClick()
+        },
         modifier = modifier
     )
 }
@@ -132,6 +146,8 @@ fun AddPharmacyScreen(
     onAddPhoto: () -> Unit,
     onCancel: () -> Unit,
     onConfirm: () -> Unit,
+    inTheBoxFunction: @Composable () -> Unit,
+    onMapClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -167,6 +183,14 @@ fun AddPharmacyScreen(
                     Text(stringResource(R.string.pharmacy_address))
                 }
             )
+            Card (
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(dimensionResource(R.dimen.map_height))
+                    /*.clickable { onMapClick() }*/
+            ) {
+                inTheBoxFunction()
+            }
             Card {
                 Column(
                     modifier = Modifier
@@ -232,6 +256,58 @@ private fun requestCameraPermission(
         }
     }
 
+@Composable
+private fun Map(
+    onMapClick: () -> Unit,
+    viewModel: AddPharmacyViewModel,
+    modifier: Modifier = Modifier
+) {
+    val uiState = viewModel.uiState.collectAsState()
+
+    /*val context: Context = LocalContext.current
+    LaunchedEffect(true) {
+        withContext(Dispatchers.IO) {
+            viewModel.getMyLocation(context)
+        }
+    }*/
+
+    GoogleMap(
+        modifier = modifier,
+        cameraPositionState = CameraPositionState(
+            if (uiState.value.userChoseLocation) {
+                CameraPosition(uiState.value.chosenLocation, 8f, 0f, 0f)
+            } else {
+                /*CameraPosition(uiState.value.currentLocation, 5f, 0f, 0f)*/
+                CameraPosition(LatLng(38.736946, -9.142685), 8f, 0f, 0f)
+            }
+        ),
+        uiSettings = MapUiSettings(
+            compassEnabled = false,
+            indoorLevelPickerEnabled = false,
+            mapToolbarEnabled = false,
+            myLocationButtonEnabled = false,
+            rotationGesturesEnabled = false,
+            scrollGesturesEnabled = false,
+            scrollGesturesEnabledDuringRotateOrZoom = false,
+            tiltGesturesEnabled = false,
+            zoomControlsEnabled = false,
+            zoomGesturesEnabled = false
+        ),
+        properties = MapProperties(
+            isMyLocationEnabled = true
+        ),
+        onMapClick = {
+            onMapClick()
+        }
+    ) {
+        if (uiState.value.userChoseLocation) {
+            Marker(
+                state = MarkerState(viewModel.uiState.collectAsState().value.chosenLocation)
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true, locale = "en")
 @Composable
 fun AddPharmacyScreenPreview() {
@@ -244,6 +320,8 @@ fun AddPharmacyScreenPreview() {
             onAddPhoto = {},
             onCancel = {},
             onConfirm = {},
+            inTheBoxFunction = {},
+            onMapClick = {},
             modifier = Modifier
                 .fillMaxHeight()
         )

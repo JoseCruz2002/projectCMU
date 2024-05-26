@@ -27,4 +27,5 @@
     <string name="medicine_search_no_results">Sem resultados</string>
     <string name="medicine_search_no_search">O resultado da pesquisa vai aparecer aqui!</string>
     <string name="medicine_search_hint">Procurar Medicamento</string>
+    <string name="location_permissions_not_given">Permissão de localização negada. Indo para localização padrão.</string>
 </resources>

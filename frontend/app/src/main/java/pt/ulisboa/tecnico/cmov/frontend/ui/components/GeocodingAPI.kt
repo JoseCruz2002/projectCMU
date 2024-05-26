@@ -38,3 +38,24 @@ suspend fun getLatLngFromPlace(
         }
     }
 }
+
+suspend fun getAddressFromCoordinates(latitude: Double, longitude: Double, apiKey: String): String? {
+    val client = OkHttpClient()
+    val url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=$latitude,$longitude&key=$apiKey"
+
+    return withContext(Dispatchers.IO) {
+        val request = Request.Builder().url(url).build()
+        val response = client.newCall(request).execute()
+        val responseBody = response.body?.string()
+
+        if (responseBody != null) {
+            val json = JSONObject(responseBody)
+            val results = json.getJSONArray("results")
+            if (results.length() > 0) {
+                val address = results.getJSONObject(0).getString("formatted_address")
+                return@withContext address
+            }
+        }
+        return@withContext null
+    }
+}

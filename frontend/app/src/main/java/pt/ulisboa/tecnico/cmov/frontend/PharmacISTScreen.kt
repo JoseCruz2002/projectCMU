@@ -16,13 +16,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navigation
 import pt.ulisboa.tecnico.cmov.frontend.ui.add_medicine_screen.AddMedicineRoute
 import pt.ulisboa.tecnico.cmov.frontend.ui.add_pharmacy_screen.AddPharmacyRoute
+import pt.ulisboa.tecnico.cmov.frontend.ui.add_pharmacy_screen.AddPharmacyViewModel
+import pt.ulisboa.tecnico.cmov.frontend.ui.add_pharmacy_screen.MapPickLocationRoute
 import pt.ulisboa.tecnico.cmov.frontend.ui.login_screen.LoginRoute
 import pt.ulisboa.tecnico.cmov.frontend.ui.main_screen.MainScreenRoute
 import pt.ulisboa.tecnico.cmov.frontend.ui.medicine_screen.MedicineRoute
@@ -36,6 +40,7 @@ enum class PharmacISTScreen {
     AddPharmacy,
     Pharmacy,
     AddMedicine,
+    MapPickLocation,
     Medicine,
 }
 
@@ -84,6 +89,8 @@ fun BottomNav(
 fun PharmacISTApp(
     navController: NavHostController = rememberNavController()
 ) {
+    val addPharmacyViewModel: AddPharmacyViewModel = viewModel(factory = AddPharmacyViewModel.Factory)
+
     Scaffold(
         bottomBar = { BottomNav(navController) }
     ) { innerPadding ->
@@ -117,12 +124,22 @@ fun PharmacISTApp(
                     modifier = modifier
                 )
             }
-            composable(route = PharmacISTScreen.AddPharmacy.name) {
-                AddPharmacyRoute(
-                    onCancel = { navController.navigate(PharmacISTScreen.Main.name) },
-                    onConfirm = { navController.navigate(PharmacISTScreen.Main.name) },
-                    modifier = modifier
-                )
+            navigation(startDestination = "match", route = "gameInProgress") {
+                composable(route = PharmacISTScreen.AddPharmacy.name) {
+                    AddPharmacyRoute(
+                        onCancel = { navController.navigate(PharmacISTScreen.Main.name) },
+                        onConfirm = { navController.navigate(PharmacISTScreen.Main.name) },
+                        onMapClick = { navController.navigate(PharmacISTScreen.MapPickLocation.name) },
+                        modifier = modifier,
+                        viewModel = addPharmacyViewModel
+                    )
+                }
+                composable(route = PharmacISTScreen.MapPickLocation.name) {
+                    MapPickLocationRoute(
+                        backToAddPharmacy = { navController.navigate(PharmacISTScreen.AddPharmacy.name) },
+                        viewModel = addPharmacyViewModel
+                    )
+                }
             }
             composable(route = "${PharmacISTScreen.Pharmacy.name}/{$PHARMACY_ID_ARG}") {
                 PharmacyRoute(
@@ -136,6 +153,11 @@ fun PharmacISTApp(
                 AddMedicineRoute(
                     onCancel = { navController.popBackStack() },
                     onConfirm = { navController.popBackStack() },
+                    modifier = modifier
+                )
+            }
+            composable(route = "${PharmacISTScreen.Medicine.name}/{$MEDICINE_ID_ARG}") {
+                MedicineRoute(
                     modifier = modifier
                 )
             }
