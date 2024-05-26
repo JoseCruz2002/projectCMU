@@ -102,7 +102,7 @@ class AddPharmacyViewModel(private val pharmacyRepository: PharmacyRepository) :
                     latitude = latLng?.latitude ?: 0.0,
                     longitude = latLng?.longitude ?: 0.0,
                     img = "",
-                    medicines = mapOf()
+                    medicines = emptyList()
                 ),
                 uri = _uiState.value.imageUri
             )

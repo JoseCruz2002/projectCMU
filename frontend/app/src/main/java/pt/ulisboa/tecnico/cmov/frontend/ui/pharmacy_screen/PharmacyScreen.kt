@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -57,12 +58,14 @@ import com.journeyapps.barcodescanner.ScanOptions
 import pt.ulisboa.tecnico.cmov.frontend.R
 import pt.ulisboa.tecnico.cmov.frontend.model.Medicine
 import pt.ulisboa.tecnico.cmov.frontend.model.Pharmacy
+import pt.ulisboa.tecnico.cmov.frontend.model.PharmacyMedicine
 import pt.ulisboa.tecnico.cmov.frontend.ui.components.Action
 import pt.ulisboa.tecnico.cmov.frontend.ui.components.ActionRow
 import pt.ulisboa.tecnico.cmov.frontend.ui.theme.PharmacISTTheme
 
 @Composable
 fun PharmacyRoute(
+    onSelectMedicine: (String) -> Unit,
     onCreateMedicine: (String, String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PharmacyViewModel = viewModel(factory = PharmacyViewModel.Factory)
@@ -82,10 +85,10 @@ fun PharmacyRoute(
     PharmacyScreen(
         pharmacy = uiState.pharmacy,
         favorite = true,
-        medicines = listOf(),
         onScan = { scanCode(context, barLauncher) },
         onGetDirections = { getDirections(context, uiState.pharmacy) },
         onShare = { share(context, uiState.pharmacy) },
+        onSelectMedicine = onSelectMedicine,
         modifier = modifier
     )
 }
@@ -94,10 +97,10 @@ fun PharmacyRoute(
 fun PharmacyScreen(
     pharmacy: Pharmacy,
     favorite: Boolean,
-    medicines: List<Pair<Medicine, Long>>,
     onScan: () -> Unit,
     onGetDirections: () -> Unit,
     onShare: () -> Unit,
+    onSelectMedicine: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -183,11 +186,12 @@ fun PharmacyScreen(
             }
         }
         Column {
-            medicines.forEach { medicine ->
+            pharmacy.medicines.forEach { medicine ->
                 HorizontalDivider()
                 ListItem(
-                    headlineContent = { Text(medicine.first.name) },
-                    trailingContent = { Text(text = medicine.second.toString()) }
+                    headlineContent = { Text(medicine.medicine.name) },
+                    modifier = Modifier.clickable { onSelectMedicine(medicine.medicine.id) },
+                    trailingContent = { Text(medicine.quantity.toString()) }
                 )
             }
         }
@@ -273,9 +277,9 @@ private fun Map(pharmacy: Pharmacy, modifier: Modifier = Modifier) {
 @Composable
 fun PharmacyScreenPreview() {
     val medicines = listOf(
-        Pair(Medicine("", "benuron", "", "", emptyList()), 65L),
-        Pair(Medicine("", "benurin", "", "", emptyList()), 4L),
-        Pair(Medicine("", "benurum", "", "", emptyList()), 13L),
+        PharmacyMedicine(Medicine("", "benuron", "", "", emptyList()), 65),
+        PharmacyMedicine(Medicine("", "benurin", "", "", emptyList()), 65),
+        PharmacyMedicine(Medicine("", "benurum", "", "", emptyList()), 65)
     )
 
     PharmacISTTheme {
@@ -287,13 +291,13 @@ fun PharmacyScreenPreview() {
                 latitude = 0.0,
                 longitude = 0.0,
                 img = "",
-                medicines = emptyMap()
+                medicines = medicines
             ),
             true,
-            medicines = medicines,
             onGetDirections = {},
             onScan = {},
             onShare = {},
+            onSelectMedicine = {},
             modifier = Modifier
                 .fillMaxSize()
         )

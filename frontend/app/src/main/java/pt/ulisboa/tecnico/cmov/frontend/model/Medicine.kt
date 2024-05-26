@@ -10,5 +10,12 @@ data class Medicine(
     var name: String = "",
     var description: String = "",
     var img: String = "",
-    var pharmacies: List<Pharmacy> = emptyList()
+    @get:Exclude
+    var pharmacies: List<MedicinePharmacy> = emptyList()
+)
+
+@IgnoreExtraProperties
+data class MedicinePharmacy(
+    var pharmacy: Pharmacy = Pharmacy(),
+    val quantity: Int = 0
 )

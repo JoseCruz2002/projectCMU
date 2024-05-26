@@ -13,16 +13,20 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import pt.ulisboa.tecnico.cmov.frontend.MEDICINE_ID_ARG
+import pt.ulisboa.tecnico.cmov.frontend.PHARMACY_ID_ARG
 import pt.ulisboa.tecnico.cmov.frontend.PharmacISTApplication
 import pt.ulisboa.tecnico.cmov.frontend.data.MedicineRepository
+import pt.ulisboa.tecnico.cmov.frontend.data.PharmacyRepository
 import pt.ulisboa.tecnico.cmov.frontend.model.Medicine
 
 class AddMedicineViewModel(
     savedStateHandle: SavedStateHandle,
-    private val medicineRepository: MedicineRepository
+    private val medicineRepository: MedicineRepository,
+    private val pharmacyRepository: PharmacyRepository
 ) : ViewModel() {
 
     val medicineId: String = checkNotNull(savedStateHandle[MEDICINE_ID_ARG])
+    val pharmacyId: String = checkNotNull(savedStateHandle[PHARMACY_ID_ARG])
 
     private val _uiState = MutableStateFlow(AddMedicineUIState())
     val uiState: StateFlow<AddMedicineUIState> = _uiState.asStateFlow()
@@ -73,6 +77,8 @@ class AddMedicineViewModel(
                     pharmacies = emptyList()
                 )
             )
+            medicineRepository.addMedicineToPharmacy(medicineId, pharmacyId)
+            pharmacyRepository.addMedicineToPharmacy(medicineId, pharmacyId)
         }
     }
 
@@ -83,7 +89,8 @@ class AddMedicineViewModel(
                     (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as PharmacISTApplication)
                 AddMedicineViewModel(
                     savedStateHandle = this.createSavedStateHandle(),
-                    medicineRepository = application.container.medicineRepository
+                    medicineRepository = application.container.medicineRepository,
+                    pharmacyRepository = application.container.pharmacyRepository
                 )
             }
         }

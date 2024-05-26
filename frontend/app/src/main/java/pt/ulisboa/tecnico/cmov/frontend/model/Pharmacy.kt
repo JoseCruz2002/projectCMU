@@ -12,5 +12,13 @@ data class Pharmacy(
     val latitude: Double = 0.0,
     val longitude: Double = 0.0,
     val img: String = "",
-    val medicines: Map<String, Long> = HashMap()
+    @get:Exclude
+    var medicines: List<PharmacyMedicine> = emptyList()
+)
+
+@IgnoreExtraProperties
+data class PharmacyMedicine(
+    @get:Exclude
+    var medicine: Medicine = Medicine(),
+    val quantity: Int = 0
 )

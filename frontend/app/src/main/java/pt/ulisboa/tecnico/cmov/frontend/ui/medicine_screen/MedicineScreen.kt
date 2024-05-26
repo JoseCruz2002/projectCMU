@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.cmov.frontend.ui.medicine_screen
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.displayCutoutPadding
@@ -10,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -25,11 +25,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import pt.ulisboa.tecnico.cmov.frontend.R
 import pt.ulisboa.tecnico.cmov.frontend.model.Medicine
-import pt.ulisboa.tecnico.cmov.frontend.model.Pharmacy
 import pt.ulisboa.tecnico.cmov.frontend.ui.theme.PharmacISTTheme
 
 @Composable
 fun MedicineRoute(
+    onSelectPharmacy: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MedicineViewModel = viewModel(factory = MedicineViewModel.Factory)
 ) {
@@ -37,16 +37,15 @@ fun MedicineRoute(
 
     MedicineScreen(
         medicine = uiState.medicine,
-        pharmacies = emptyList(),
+        onSelectPharmacy = onSelectPharmacy,
         modifier = modifier
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MedicineScreen(
     medicine: Medicine,
-    pharmacies: List<Pharmacy>,
+    onSelectPharmacy: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -71,12 +70,12 @@ fun MedicineScreen(
             style = MaterialTheme.typography.titleMedium
         )
         Column {
-            pharmacies.forEach { pharmacy ->
+            medicine.pharmacies.forEach { pharmacy ->
                 HorizontalDivider()
                 ListItem(
-                    headlineContent = {
-                        Text(pharmacy.name)
-                    },
+                    headlineContent = { Text(pharmacy.pharmacy.name) },
+                    modifier = Modifier.clickable { onSelectPharmacy(pharmacy.pharmacy.id) },
+                    trailingContent = { Text(pharmacy.quantity.toString()) }
                 )
             }
         }
@@ -94,11 +93,7 @@ fun MedicineScreenPreview() {
                 img = "",
                 pharmacies = emptyList()
             ),
-            pharmacies = listOf(
-                Pharmacy(name = "People's Pharmacy"),
-                Pharmacy(name = "TopMeds"),
-                Pharmacy(name = "PharmaLife")
-            ),
+            onSelectPharmacy = {},
             modifier = Modifier.fillMaxSize()
         )
     }

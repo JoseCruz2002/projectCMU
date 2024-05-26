@@ -89,7 +89,8 @@ fun BottomNav(
 fun PharmacISTApp(
     navController: NavHostController = rememberNavController()
 ) {
-    val addPharmacyViewModel: AddPharmacyViewModel = viewModel(factory = AddPharmacyViewModel.Factory)
+    val addPharmacyViewModel: AddPharmacyViewModel =
+        viewModel(factory = AddPharmacyViewModel.Factory)
 
     Scaffold(
         bottomBar = { BottomNav(navController) }
@@ -146,6 +147,9 @@ fun PharmacISTApp(
                     onCreateMedicine = { pharmacyId, medicineId ->
                         navController.navigate("${PharmacISTScreen.AddMedicine.name}/${pharmacyId}/${medicineId}")
                     },
+                    onSelectMedicine = { medicineId ->
+                        navController.navigate("${PharmacISTScreen.Medicine.name}/$medicineId")
+                    },
                     modifier = modifier
                 )
             }
@@ -158,11 +162,9 @@ fun PharmacISTApp(
             }
             composable(route = "${PharmacISTScreen.Medicine.name}/{$MEDICINE_ID_ARG}") {
                 MedicineRoute(
-                    modifier = modifier
-                )
-            }
-            composable(route = "${PharmacISTScreen.Medicine.name}/{$MEDICINE_ID_ARG}") {
-                MedicineRoute(
+                    onSelectPharmacy = { pharmacyId ->
+                        navController.navigate("${PharmacISTScreen.Pharmacy.name}/$pharmacyId")
+                    },
                     modifier = modifier
                 )
             }
