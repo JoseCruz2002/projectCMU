@@ -57,31 +57,33 @@ fun BottomNav(
         backStackEntry?.destination?.route?.substringBefore("/") ?: PharmacISTScreen.Login.name
     )
 
-    NavigationBar(modifier = modifier) {
-        NavigationBarItem(
-            icon = { Icon(imageVector = Icons.Outlined.Map, contentDescription = null) },
-            label = { Text(stringResource(R.string.nav_main)) },
-            selected = currentScreen == PharmacISTScreen.Main,
-            onClick = {
-                navController.navigate(PharmacISTScreen.Main.name)
-            }
-        )
-        NavigationBarItem(
-            icon = { Icon(imageVector = Icons.Outlined.Search, contentDescription = null) },
-            label = { Text(stringResource(R.string.nav_search_medicine)) },
-            selected = currentScreen == PharmacISTScreen.SearchMedicine,
-            onClick = {
-                navController.navigate(PharmacISTScreen.SearchMedicine.name)
-            }
-        )
-        NavigationBarItem(
-            icon = { Icon(imageVector = Icons.Outlined.Add, contentDescription = null) },
-            label = { Text(stringResource(R.string.nav_add_pharmacy)) },
-            selected = currentScreen == PharmacISTScreen.AddPharmacy,
-            onClick = {
-                navController.navigate(PharmacISTScreen.AddPharmacy.name)
-            }
-        )
+    if(currentScreen != PharmacISTScreen.Login) {
+        NavigationBar(modifier = modifier) {
+            NavigationBarItem(
+                icon = { Icon(imageVector = Icons.Outlined.Map, contentDescription = null) },
+                label = { Text(stringResource(R.string.nav_main)) },
+                selected = currentScreen == PharmacISTScreen.Main,
+                onClick = {
+                    navController.navigate(PharmacISTScreen.Main.name)
+                }
+            )
+            NavigationBarItem(
+                icon = { Icon(imageVector = Icons.Outlined.Search, contentDescription = null) },
+                label = { Text(stringResource(R.string.nav_search_medicine)) },
+                selected = currentScreen == PharmacISTScreen.SearchMedicine,
+                onClick = {
+                    navController.navigate(PharmacISTScreen.SearchMedicine.name)
+                }
+            )
+            NavigationBarItem(
+                icon = { Icon(imageVector = Icons.Outlined.Add, contentDescription = null) },
+                label = { Text(stringResource(R.string.nav_add_pharmacy)) },
+                selected = currentScreen == PharmacISTScreen.AddPharmacy,
+                onClick = {
+                    navController.navigate(PharmacISTScreen.AddPharmacy.name)
+                }
+            )
+        }
     }
 }
 
