@@ -20,7 +20,7 @@ class DefaultAppContainer : AppContainer {
     override val pharmacyRepository: PharmacyRepository =
         FirebasePharmacyRepository(database, storage)
 
-    override val medicineRepository: MedicineRepository = FirebaseMedicineRepository(database)
+    override val medicineRepository: MedicineRepository = FirebaseMedicineRepository(database,storage)
 
     override val userRepository: UserRepository = FirebaseUserRepository(database)
 }

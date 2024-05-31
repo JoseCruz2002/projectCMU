@@ -1,8 +1,10 @@
 package pt.ulisboa.tecnico.cmov.frontend.data
 
+import android.net.Uri
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
 import pt.ulisboa.tecnico.cmov.frontend.model.Medicine
 import pt.ulisboa.tecnico.cmov.frontend.model.MedicinePharmacy
@@ -10,21 +12,24 @@ import pt.ulisboa.tecnico.cmov.frontend.model.Pharmacy
 
 const val MEDICINES_REFERENCE_PATH = "medicines"
 const val MEDICINE_PHARMACIES_REFERENCE_PATH = "medicines"
+const val MEDICINE_IMAGES_REFERENCE_PATH = "medicines"
 
 interface MedicineRepository {
     suspend fun getMedicines(ids: List<String>? = null): List<Medicine>
     suspend fun searchMedicines(query: String): List<Medicine>
     suspend fun getMedicine(id: String): Medicine
     suspend fun getMedicinePharmacies(id: String): List<MedicinePharmacy>
-    suspend fun addMedicine(medicine: Medicine)
+    suspend fun addMedicine(medicine: Medicine, uri: Uri)
     suspend fun addMedicineToPharmacy(medicineId: String, pharmacyId: String)
 }
 
 class FirebaseMedicineRepository(
     database: FirebaseFirestore,
+    storage: FirebaseStorage
 ) : MedicineRepository {
 
     private val medicinesRef = database.collection(MEDICINES_REFERENCE_PATH)
+    private val storageRef = storage.getReference(MEDICINE_IMAGES_REFERENCE_PATH)
 
     private fun medicinePharmaciesRef(id: String): CollectionReference {
         return medicinesRef.document(id).collection(MEDICINE_PHARMACIES_REFERENCE_PATH)
@@ -90,9 +95,14 @@ class FirebaseMedicineRepository(
         }
     }
 
-    override suspend fun addMedicine(medicine: Medicine) {
+    override suspend fun addMedicine(medicine: Medicine, uri: Uri) {
         try {
-            medicinesRef.document(medicine.id).set(medicine)
+            val photoRef = storageRef.child(uri.lastPathSegment!!)
+            photoRef.putFile(uri).continueWithTask {
+                photoRef.downloadUrl
+            }.addOnCompleteListener { task ->
+                medicinesRef.document(medicine.id).set(medicine.copy(img = task.result.toString()))
+            }
         } catch (e: Exception) {
             // Handle exception
         }

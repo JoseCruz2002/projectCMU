@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.cmov.frontend.ui.add_medicine_screen
 
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -55,6 +56,14 @@ class AddMedicineViewModel(
         }
     }
 
+    fun updateUri(updatedUri: Uri) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                imageUri = updatedUri
+            )
+        }
+    }
+
     fun incrementQuantity() {
         val currentQuantity = _uiState.value.quantity
         updateQuantity((currentQuantity + 1).toString())
@@ -75,7 +84,8 @@ class AddMedicineViewModel(
                     description = _uiState.value.description,
                     img = "",
                     pharmacies = emptyList()
-                )
+                ),
+                uri = _uiState.value.imageUri
             )
             medicineRepository.addMedicineToPharmacy(medicineId, pharmacyId)
             pharmacyRepository.addMedicineToPharmacy(medicineId, pharmacyId)

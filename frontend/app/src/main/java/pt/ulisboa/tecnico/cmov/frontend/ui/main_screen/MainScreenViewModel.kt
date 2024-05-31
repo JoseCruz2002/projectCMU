@@ -15,16 +15,21 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import pt.ulisboa.tecnico.cmov.frontend.PharmacISTApplication
 import pt.ulisboa.tecnico.cmov.frontend.data.PharmacyRepository
+import pt.ulisboa.tecnico.cmov.frontend.data.UserRepository
 import pt.ulisboa.tecnico.cmov.frontend.ui.components.getLatLngFromPlace
 import pt.ulisboa.tecnico.cmov.frontend.ui.components.getLocationFromLatLng
 
-class MainScreenViewModel(private val pharmacyRepository: PharmacyRepository) : ViewModel() {
+class MainScreenViewModel(
+    private val pharmacyRepository: PharmacyRepository,
+    private val userRepository: UserRepository
+) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(MainScreenUIState(listOf()))
+    private val _uiState = MutableStateFlow(MainScreenUIState(listOf(), listOf()))
     val uiState: StateFlow<MainScreenUIState> = _uiState.asStateFlow()
 
     init {
         getPharmacies()
+        getFavourites()
     }
 
     private fun getPharmacies() {
@@ -37,12 +42,23 @@ class MainScreenViewModel(private val pharmacyRepository: PharmacyRepository) : 
         }
     }
 
+    private fun getFavourites() {
+        viewModelScope.launch {
+            _uiState.update { currentState ->
+                currentState.copy(
+                    favourites = userRepository.getFavorites()
+                )
+            }
+        }
+    }
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as PharmacISTApplication)
                 val pharmacyRepository = application.container.pharmacyRepository
-                MainScreenViewModel(pharmacyRepository = pharmacyRepository)
+                val userRepository = application.container.userRepository
+                MainScreenViewModel(pharmacyRepository = pharmacyRepository, userRepository = userRepository)
             }
         }
     }

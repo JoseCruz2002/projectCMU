@@ -17,6 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.CameraMoveStartedReason
@@ -25,6 +27,7 @@ import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import pt.ulisboa.tecnico.cmov.frontend.model.Pharmacy
 import pt.ulisboa.tecnico.cmov.frontend.ui.main_screen.MainScreenViewModel
 
 private const val TAG = "LocationTrackActivity"
@@ -61,6 +64,17 @@ fun CreateMap(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
         viewModel.updateLocationPermission(isGranted)
+    }
+
+    fun chooseColor(pharmacy: Pharmacy): BitmapDescriptor {
+        var tmp = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)
+
+        if (uiState.favourites.contains(pharmacy.id)) {
+            // Create a bitmap descriptor with a specific color
+            tmp = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)
+        }
+
+        return tmp
     }
 
     LaunchedEffect(true) {
@@ -142,12 +156,12 @@ fun CreateMap(
                 onClick = {
                     onPharmacyClick(pharmacy.id)
                     true
-                }
+                },
+                icon = chooseColor(pharmacy)
             )
         }
     }
 }
-
 
 public fun getLocationFromLatLng(latLng: LatLng): Location {
     val newLocation: Location = Location("")

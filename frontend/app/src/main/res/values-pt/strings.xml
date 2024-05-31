@@ -22,7 +22,7 @@
     <string name="photo_permission_toast">Necessário permissão de câmara para tirar fotos. Por favor, conceda a permissão para continuar.</string>
     <string name="scan_bar_code">Escanear código de barras</string>
     <string name="share">Partilhar</string>
-    <string name="share_Text">Farmácia: %1$s  Morada: %2$s</string>
+    <string name="share_Text">Farmácia: %1$s Morada: %2$s</string>
     <string name="share_via">Partilhar com</string>
     <string name="medicine_search_no_results">Sem resultados</string>
     <string name="medicine_search_no_search">O resultado da pesquisa vai aparecer aqui!</string>

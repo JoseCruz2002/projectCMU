@@ -3,7 +3,9 @@ package pt.ulisboa.tecnico.cmov.frontend.ui.medicine_screen
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.displayCutoutPadding
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,10 +22,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import pt.ulisboa.tecnico.cmov.frontend.R
 import pt.ulisboa.tecnico.cmov.frontend.model.Medicine
 import pt.ulisboa.tecnico.cmov.frontend.ui.theme.PharmacISTTheme
@@ -65,6 +71,21 @@ fun MedicineScreen(
                 .fillMaxWidth()
                 .height(dimensionResource(R.dimen.image_height))
         ) {
+            Row {
+            // Placeholders for image
+            AsyncImage(
+                model = ImageRequest
+                    .Builder(context = LocalContext.current)
+                    .data(medicine.img)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = medicine.name,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+            )
+        }
         }
         Card(
             modifier = Modifier
