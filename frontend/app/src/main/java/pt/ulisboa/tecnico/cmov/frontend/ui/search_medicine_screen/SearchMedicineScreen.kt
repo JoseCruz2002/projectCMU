@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.HorizontalDivider
@@ -93,10 +95,17 @@ fun SearchMedicineScreen(
             }
 
             else -> {
-                results.forEach { result ->
-                    ListItem(headlineContent = { Text(text = result.name) },
-                        modifier = Modifier.clickable { onSelectMedicine(result.id) })
-                    HorizontalDivider()
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .imePadding()
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    results.forEach { result ->
+                        ListItem(headlineContent = { Text(text = result.name) },
+                            modifier = Modifier.clickable { onSelectMedicine(result.id) })
+                        HorizontalDivider()
+                    }
                 }
             }
         }
