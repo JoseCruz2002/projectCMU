@@ -17,6 +17,7 @@ import pt.ulisboa.tecnico.cmov.frontend.PHARMACY_ID_ARG
 import pt.ulisboa.tecnico.cmov.frontend.PharmacISTApplication
 import pt.ulisboa.tecnico.cmov.frontend.data.MedicineRepository
 import pt.ulisboa.tecnico.cmov.frontend.data.PharmacyRepository
+import pt.ulisboa.tecnico.cmov.frontend.data.UserRepository
 import pt.ulisboa.tecnico.cmov.frontend.model.Pharmacy
 import pt.ulisboa.tecnico.cmov.frontend.model.PharmacyMedicine
 
@@ -24,11 +25,12 @@ class PharmacyViewModel(
     savedStateHandle: SavedStateHandle,
     private val pharmacyRepository: PharmacyRepository,
     private val medicineRepository: MedicineRepository,
+    private val userRepository: UserRepository,
 ) : ViewModel() {
 
     private val itemId: String = checkNotNull(savedStateHandle[PHARMACY_ID_ARG])
 
-    private val _uiState = MutableStateFlow(PharmacyUIState(Pharmacy()))
+    private val _uiState = MutableStateFlow(PharmacyUIState(Pharmacy(), false))
     val uiState: StateFlow<PharmacyUIState> = _uiState.asStateFlow()
 
     init {
@@ -48,6 +50,31 @@ class PharmacyViewModel(
                 )
             }
         }
+        viewModelScope.launch {
+            val favorite = userRepository.isFavorite(pharmacyId)
+            _uiState.update { currentState ->
+                currentState.copy(
+                    favorite = favorite
+                )
+            }
+        }
+    }
+
+    fun toggleFavorite(newValue: Boolean) {
+        if (newValue) {
+            viewModelScope.launch {
+                userRepository.addFavorite(_uiState.value.pharmacy.id)
+            }
+        } else {
+            viewModelScope.launch {
+                userRepository.removeFavorite(_uiState.value.pharmacy.id)
+            }
+        }
+        _uiState.update { currentState ->
+            currentState.copy(
+                favorite = newValue
+            )
+        }
     }
 
     companion object {
@@ -56,10 +83,12 @@ class PharmacyViewModel(
                 val application = (this[APPLICATION_KEY] as PharmacISTApplication)
                 val pharmacyRepository = application.container.pharmacyRepository
                 val medicineRepository = application.container.medicineRepository
+                val userRepository = application.container.userRepository
                 PharmacyViewModel(
                     savedStateHandle = this.createSavedStateHandle(),
                     pharmacyRepository = pharmacyRepository,
-                    medicineRepository = medicineRepository
+                    medicineRepository = medicineRepository,
+                    userRepository = userRepository
                 )
             }
         }

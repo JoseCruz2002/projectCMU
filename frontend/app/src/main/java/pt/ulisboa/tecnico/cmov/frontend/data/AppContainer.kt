@@ -9,6 +9,7 @@ import com.google.firebase.storage.storage
 interface AppContainer {
     val pharmacyRepository: PharmacyRepository
     val medicineRepository: MedicineRepository
+    val userRepository: UserRepository
 }
 
 class DefaultAppContainer : AppContainer {
@@ -19,6 +20,7 @@ class DefaultAppContainer : AppContainer {
     override val pharmacyRepository: PharmacyRepository =
         FirebasePharmacyRepository(database, storage)
 
-    override val medicineRepository: MedicineRepository =
-        FirebaseMedicineRepository(database)
+    override val medicineRepository: MedicineRepository = FirebaseMedicineRepository(database)
+
+    override val userRepository: UserRepository = FirebaseUserRepository(database)
 }

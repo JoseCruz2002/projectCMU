@@ -84,7 +84,8 @@ fun PharmacyRoute(
 
     PharmacyScreen(
         pharmacy = uiState.pharmacy,
-        favorite = true,
+        favorite = uiState.favorite,
+        onFavoriteChange = { viewModel.toggleFavorite(it) },
         onScan = { scanCode(context, barLauncher) },
         onGetDirections = { getDirections(context, uiState.pharmacy) },
         onShare = { share(context, uiState.pharmacy) },
@@ -97,6 +98,7 @@ fun PharmacyRoute(
 fun PharmacyScreen(
     pharmacy: Pharmacy,
     favorite: Boolean,
+    onFavoriteChange: (Boolean) -> Unit,
     onScan: () -> Unit,
     onGetDirections: () -> Unit,
     onShare: () -> Unit,
@@ -121,7 +123,7 @@ fun PharmacyScreen(
             Spacer(modifier = Modifier.weight(1f))
             IconToggleButton(
                 checked = favorite,
-                onCheckedChange = { }
+                onCheckedChange = onFavoriteChange
             ) {
                 if (favorite) {
                     Icon(Icons.Default.Star, contentDescription = null)
@@ -298,6 +300,7 @@ fun PharmacyScreenPreview() {
             onScan = {},
             onShare = {},
             onSelectMedicine = {},
+            onFavoriteChange = {},
             modifier = Modifier
                 .fillMaxSize()
         )
