@@ -21,6 +21,7 @@ interface MedicineRepository {
     suspend fun getMedicinePharmacies(id: String): List<MedicinePharmacy>
     suspend fun addMedicine(medicine: Medicine, uri: Uri)
     suspend fun addMedicineToPharmacy(medicineId: String, pharmacyId: String)
+    suspend fun existsMedicine(id: String): Boolean
 }
 
 class FirebaseMedicineRepository(
@@ -68,6 +69,14 @@ class FirebaseMedicineRepository(
                     this.id = it.id
                 }!!
             }
+    }
+
+    override suspend fun existsMedicine(id: String): Boolean {
+        return try {
+            medicinesRef.document(id).get().await().exists()
+        } catch (e: Exception) {
+            return false
+        }
     }
 
     override suspend fun getMedicine(id: String): Medicine {

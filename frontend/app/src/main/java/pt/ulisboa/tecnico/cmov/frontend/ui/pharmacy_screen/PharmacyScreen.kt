@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.cmov.frontend.ui.pharmacy_screen
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.compose.foundation.clickable

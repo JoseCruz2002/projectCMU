@@ -88,7 +88,7 @@ fun MainScreen(
         SearchBar(
             query = query,
             onQueryChange = onQueryChange,
-            onActiveChange = onActiveChange,
+            onActiveChange = {},//onActiveChange,
             onSearch = onSearch,
             active = active,
             placeholder = {

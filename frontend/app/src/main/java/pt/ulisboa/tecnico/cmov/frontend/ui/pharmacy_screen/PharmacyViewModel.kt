@@ -77,6 +77,13 @@ class PharmacyViewModel(
         }
     }
 
+    fun existsMedicine(medicineId: String) {
+        viewModelScope.launch {
+            val result = medicineRepository.existsMedicine(medicineId)
+        
+        }
+    }
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {

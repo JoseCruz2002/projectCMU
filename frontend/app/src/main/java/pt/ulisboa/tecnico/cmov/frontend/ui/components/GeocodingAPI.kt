@@ -25,13 +25,17 @@ suspend fun getLatLngFromPlace(
         if (response.isSuccessful) {
             response.body?.string()?.let { responseBody ->
                 val json = JSONObject(responseBody)
-                val location = json.getJSONArray("results")
-                    .getJSONObject(0)
-                    .getJSONObject("geometry")
-                    .getJSONObject("location")
-                val lat = location.getDouble("lat")
-                val lng = location.getDouble("lng")
-                LatLng(lat, lng)
+                if (json.getJSONArray("results").length() > 0) {
+                    val location = json.getJSONArray("results")
+                        .getJSONObject(0)
+                        .getJSONObject("geometry")
+                        .getJSONObject("location")
+                    val lat = location.getDouble("lat")
+                    val lng = location.getDouble("lng")
+                    LatLng(lat, lng)
+                } else {
+                    LatLng(38.736946,-9.142685)//If search fails it send to Lisbon
+                }
             }
         } else {
             null
