@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -64,6 +65,18 @@ fun MedicineScreen(
                 .fillMaxWidth()
                 .height(dimensionResource(R.dimen.image_height))
         ) {
+        }
+        Card(
+            modifier = Modifier
+                .fillMaxWidth(),
+            colors = CardColors(
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                disabledContainerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                disabledContentColor = MaterialTheme.colorScheme.onTertiaryContainer
+            )
+        ) {
+            Text(medicine.description, modifier = Modifier.padding(dimensionResource(R.dimen.padding_small)))
         }
         Text(
             text = stringResource(R.string.medicine_pharmacies),
