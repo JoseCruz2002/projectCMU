@@ -1,5 +1,9 @@
 package pt.ulisboa.tecnico.cmov.frontend.ui.medicine_screen
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -76,7 +80,9 @@ fun MedicineScreen(
             AsyncImage(
                 model = ImageRequest
                     .Builder(context = LocalContext.current)
-                    .data(medicine.img)
+                    .data(
+                        if (isWifiConnected(context = LocalContext.current)) {medicine.img} else {}
+                    )
                     .crossfade(true)
                     .build(),
                 contentDescription = medicine.name,
@@ -130,5 +136,17 @@ fun MedicineScreenPreview() {
             onSelectPharmacy = {},
             modifier = Modifier.fillMaxSize()
         )
+    }
+}
+
+fun isWifiConnected(context: Context): Boolean {
+    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        val network = connectivityManager.activeNetwork ?: return false
+        val networkCapabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+        networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+    } else {
+        val networkInfo = connectivityManager.activeNetworkInfo ?: return false
+        networkInfo.type == ConnectivityManager.TYPE_WIFI
     }
 }

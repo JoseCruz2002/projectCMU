@@ -2,7 +2,10 @@ package pt.ulisboa.tecnico.cmov.frontend.ui.pharmacy_screen
 
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.net.Uri
+import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
@@ -149,7 +152,9 @@ fun PharmacyScreen(
                 AsyncImage(
                     model = ImageRequest
                         .Builder(context = LocalContext.current)
-                        .data(pharmacy.img)
+                        .data(
+                            if (isWifiConnected(context = LocalContext.current)) {pharmacy.img} else {}
+                        )
                         .crossfade(true)
                         .build(),
                     contentDescription = pharmacy.name,
@@ -305,5 +310,17 @@ fun PharmacyScreenPreview() {
             modifier = Modifier
                 .fillMaxSize()
         )
+    }
+}
+
+fun isWifiConnected(context: Context): Boolean {
+    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        val network = connectivityManager.activeNetwork ?: return false
+        val networkCapabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+        networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+    } else {
+        val networkInfo = connectivityManager.activeNetworkInfo ?: return false
+        networkInfo.type == ConnectivityManager.TYPE_WIFI
     }
 }
