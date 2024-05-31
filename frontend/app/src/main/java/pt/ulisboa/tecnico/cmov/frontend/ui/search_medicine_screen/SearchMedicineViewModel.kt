@@ -32,7 +32,7 @@ class SearchMedicineViewModel(
         viewModelScope.launch {
             _uiState.update { currentState ->
                 currentState.copy(
-                    results = medicineRepository.getMedicines()
+                    results = medicineRepository.searchMedicines(_uiState.value.query)
                 )
             }
         }

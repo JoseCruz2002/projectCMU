@@ -13,6 +13,7 @@ const val MEDICINE_PHARMACIES_REFERENCE_PATH = "medicines"
 
 interface MedicineRepository {
     suspend fun getMedicines(ids: List<String>? = null): List<Medicine>
+    suspend fun searchMedicines(query: String): List<Medicine>
     suspend fun getMedicine(id: String): Medicine
     suspend fun getMedicinePharmacies(id: String): List<MedicinePharmacy>
     suspend fun addMedicine(medicine: Medicine)
@@ -48,6 +49,20 @@ class FirebaseMedicineRepository(
         } catch (e: Exception) {
             emptyList()
         }
+    }
+
+    override suspend fun searchMedicines(query: String): List<Medicine> {
+        return medicinesRef
+            .whereGreaterThanOrEqualTo("name", query)
+            .whereLessThan("name", query + "\uf8ff")
+            .get()
+            .await()
+            .documents
+            .map {
+                it.toObject(Medicine::class.java)?.apply {
+                    this.id = it.id
+                }!!
+            }
     }
 
     override suspend fun getMedicine(id: String): Medicine {
